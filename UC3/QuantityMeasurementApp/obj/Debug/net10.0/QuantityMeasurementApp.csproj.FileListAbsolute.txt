@@ -1,0 +1,15 @@
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC3\QuantityMeasurementApp\bin\Debug\net10.0\QuantityMeasurementApp.exe
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC3\QuantityMeasurementApp\bin\Debug\net10.0\QuantityMeasurementApp.deps.json
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC3\QuantityMeasurementApp\bin\Debug\net10.0\QuantityMeasurementApp.runtimeconfig.json
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC3\QuantityMeasurementApp\bin\Debug\net10.0\QuantityMeasurementApp.dll
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC3\QuantityMeasurementApp\bin\Debug\net10.0\QuantityMeasurementApp.pdb
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC3\QuantityMeasurementApp\obj\Debug\net10.0\QuantityMeasurementApp.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC3\QuantityMeasurementApp\obj\Debug\net10.0\QuantityMeasurementApp.AssemblyInfoInputs.cache
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC3\QuantityMeasurementApp\obj\Debug\net10.0\QuantityMeasurementApp.AssemblyInfo.cs
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC3\QuantityMeasurementApp\obj\Debug\net10.0\QuantityMeasurementApp.csproj.CoreCompileInputs.cache
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC3\QuantityMeasurementApp\obj\Debug\net10.0\QuantityMeasurementApp.sourcelink.json
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC3\QuantityMeasurementApp\obj\Debug\net10.0\QuantityMeasurementApp.dll
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC3\QuantityMeasurementApp\obj\Debug\net10.0\refint\QuantityMeasurementApp.dll
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC3\QuantityMeasurementApp\obj\Debug\net10.0\QuantityMeasurementApp.pdb
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC3\QuantityMeasurementApp\obj\Debug\net10.0\QuantityMeasurementApp.genruntimeconfig.cache
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC3\QuantityMeasurementApp\obj\Debug\net10.0\ref\QuantityMeasurementApp.dll
