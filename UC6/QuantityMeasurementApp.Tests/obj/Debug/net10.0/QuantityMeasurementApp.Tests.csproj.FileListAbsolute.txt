@@ -1,0 +1,8 @@
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC6\QuantityMeasurementApp.Tests\obj\Debug\net10.0\QuantityMeasurementApp.Tests.csproj.AssemblyReference.cache
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC6\QuantityMeasurementApp.Tests\obj\Debug\net10.0\QuantityMeasurementApp.Tests.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC6\QuantityMeasurementApp.Tests\obj\Debug\net10.0\QuantityMeasurementApp.Tests.gentestingplatformentrypointinputcache.cache
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC6\QuantityMeasurementApp.Tests\obj\Debug\net10.0\QuantityMeasurementApp.Tests.genautoregisteredextensionsinputcache.cache
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC6\QuantityMeasurementApp.Tests\obj\Debug\net10.0\QuantityMeasurementApp.Tests.AssemblyInfoInputs.cache
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC6\QuantityMeasurementApp.Tests\obj\Debug\net10.0\QuantityMeasurementApp.Tests.AssemblyInfo.cs
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC6\QuantityMeasurementApp.Tests\obj\Debug\net10.0\QuantityMeasurementApp.Tests.csproj.CoreCompileInputs.cache
+c:\Users\harsh\Desktop\QuantityMeasurementApp\UC6\QuantityMeasurementApp.Tests\obj\Debug\net10.0\QuantityMeasurementApp.Tests.sourcelink.json
