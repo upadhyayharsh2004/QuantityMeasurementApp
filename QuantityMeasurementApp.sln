@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UC1", "UC1", "{EAF24457-355D-61E3-94AE-7DA66173B438}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuantityMeasurementApp", "UC1\QuantityMeasurementApp\QuantityMeasurementApp.csproj", "{B09F4ECD-C439-157C-02E5-3F5ECD24309C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B09F4ECD-C439-157C-02E5-3F5ECD24309C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B09F4ECD-C439-157C-02E5-3F5ECD24309C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B09F4ECD-C439-157C-02E5-3F5ECD24309C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B09F4ECD-C439-157C-02E5-3F5ECD24309C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B09F4ECD-C439-157C-02E5-3F5ECD24309C} = {EAF24457-355D-61E3-94AE-7DA66173B438}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {09019E13-A8F1-47A1-868A-2D28CA1F0B30}
+	EndGlobalSection
+EndGlobal
