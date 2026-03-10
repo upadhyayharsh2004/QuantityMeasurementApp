@@ -1,5 +1,0 @@
-c:\Users\harsh\Desktop\QuantityMeasurementApp\UC14\QuantityMeasurementApp\obj\Debug\net10.0\QuantityMeasurementApp.GeneratedMSBuildEditorConfig.editorconfig
-c:\Users\harsh\Desktop\QuantityMeasurementApp\UC14\QuantityMeasurementApp\obj\Debug\net10.0\QuantityMeasurementApp.AssemblyInfoInputs.cache
-c:\Users\harsh\Desktop\QuantityMeasurementApp\UC14\QuantityMeasurementApp\obj\Debug\net10.0\QuantityMeasurementApp.AssemblyInfo.cs
-c:\Users\harsh\Desktop\QuantityMeasurementApp\UC14\QuantityMeasurementApp\obj\Debug\net10.0\QuantityMeasurementApp.csproj.CoreCompileInputs.cache
-c:\Users\harsh\Desktop\QuantityMeasurementApp\UC14\QuantityMeasurementApp\obj\Debug\net10.0\QuantityMeasurementApp.sourcelink.json
