@@ -1,0 +1,92 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "QuantityMeasurementApp/1.0.0": {
+        "dependencies": {
+          "QuantityMeasurementAppModels": "1.0.0",
+          "QuantityMeasurementAppRepositories": "1.0.0",
+          "QuantityMeasurementAppServices": "1.0.0"
+        },
+        "runtime": {
+          "QuantityMeasurementApp.dll": {}
+        }
+      },
+      "QuantityMeasurementAppBusiness/1.0.0": {
+        "dependencies": {
+          "QuantityMeasurementAppModels": "1.0.0",
+          "QuantityMeasurementAppRepositories": "1.0.0"
+        },
+        "runtime": {
+          "QuantityMeasurementAppBusiness.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "QuantityMeasurementAppModels/1.0.0": {
+        "runtime": {
+          "QuantityMeasurementAppModels.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "QuantityMeasurementAppRepositories/1.0.0": {
+        "dependencies": {
+          "QuantityMeasurementAppModels": "1.0.0"
+        },
+        "runtime": {
+          "QuantityMeasurementAppRepositories.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "QuantityMeasurementAppServices/1.0.0": {
+        "dependencies": {
+          "QuantityMeasurementAppBusiness": "1.0.0",
+          "QuantityMeasurementAppModels": "1.0.0",
+          "QuantityMeasurementAppRepositories": "1.0.0"
+        },
+        "runtime": {
+          "QuantityMeasurementAppServices.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "QuantityMeasurementApp/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "QuantityMeasurementAppBusiness/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "QuantityMeasurementAppModels/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "QuantityMeasurementAppRepositories/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "QuantityMeasurementAppServices/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
