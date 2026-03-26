@@ -19,11 +19,11 @@ namespace QuantityMeasurementApp.Controllers
 
         // ========================== LENGTH METHODS ==========================
 
-        public void PerformLengthComparisonBetweenTwoGivenLengthQuantityObjectsAndDisplayWhetherTheyAreEqualOrNot(QuantityDTO firstLengthQuantityObjectParameterForComparisonOperation, QuantityDTO secondLengthQuantityObjectParameterForComparisonOperation)
+        public void PerformLengthComparisonBetweenTwoGivenLengthQuantityObjectsAndDisplayWhetherTheyAreEqualOrNot(UniversalMeasurementDataCarrierObject firstLengthQuantityObjectParameterForComparisonOperation, UniversalMeasurementDataCarrierObject secondLengthQuantityObjectParameterForComparisonOperation)
         {
             try
             {
-                bool comparisonResultForLengthQuantities = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.Compare(firstLengthQuantityObjectParameterForComparisonOperation, secondLengthQuantityObjectParameterForComparisonOperation);
+                bool comparisonResultForLengthQuantities = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.PerformComparisonOperationBetweenTwoQuantityObjectsAndReturnBooleanResult(firstLengthQuantityObjectParameterForComparisonOperation, secondLengthQuantityObjectParameterForComparisonOperation);
 
                 if (comparisonResultForLengthQuantities)
                     Console.WriteLine("✅ The given length values are equal.");
@@ -36,11 +36,11 @@ namespace QuantityMeasurementApp.Controllers
             }
         }
 
-        public void PerformLengthConversionFromOneUnitToAnotherUnitAndDisplayTheConvertedResult(QuantityDTO inputLengthQuantityObjectToBeConvertedIntoTargetUnit, string targetUnitForLengthConversionOperation)
+        public void PerformLengthConversionFromOneUnitToAnotherUnitAndDisplayTheConvertedResult(UniversalMeasurementDataCarrierObject inputLengthQuantityObjectToBeConvertedIntoTargetUnit, string targetUnitForLengthConversionOperation)
         {
             try
             {
-                QuantityDTO convertedLengthQuantityResultAfterSuccessfulConversion = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.Convert(inputLengthQuantityObjectToBeConvertedIntoTargetUnit, targetUnitForLengthConversionOperation);
+                UniversalMeasurementDataCarrierObject convertedLengthQuantityResultAfterSuccessfulConversion = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.PerformConversionOperationBetweenUnitsAndReturnConvertedQuantity(inputLengthQuantityObjectToBeConvertedIntoTargetUnit, targetUnitForLengthConversionOperation);
                 Console.WriteLine($"✅ Conversion Result: {inputLengthQuantityObjectToBeConvertedIntoTargetUnit} is equal to {convertedLengthQuantityResultAfterSuccessfulConversion}");
             }
             catch (Exception exceptionOccurredDuringLengthConversionOperationExecution)
@@ -49,11 +49,11 @@ namespace QuantityMeasurementApp.Controllers
             }
         }
 
-        public void PerformAdditionOfTwoLengthQuantitiesAndDisplayResultInSpecifiedTargetUnit(QuantityDTO firstLengthQuantityObjectForAdditionOperation, QuantityDTO secondLengthQuantityObjectForAdditionOperation, string targetUnitForLengthAdditionOperationResult)
+        public void PerformAdditionOfTwoLengthQuantitiesAndDisplayResultInSpecifiedTargetUnit(UniversalMeasurementDataCarrierObject firstLengthQuantityObjectForAdditionOperation, UniversalMeasurementDataCarrierObject secondLengthQuantityObjectForAdditionOperation, string targetUnitForLengthAdditionOperationResult)
         {
             try
             {
-                QuantityDTO additionResultForLengthQuantities = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.Add(firstLengthQuantityObjectForAdditionOperation, secondLengthQuantityObjectForAdditionOperation, targetUnitForLengthAdditionOperationResult);
+                UniversalMeasurementDataCarrierObject additionResultForLengthQuantities = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.PerformAdditionOperationBetweenTwoQuantityObjectsAndReturnResult(firstLengthQuantityObjectForAdditionOperation, secondLengthQuantityObjectForAdditionOperation, targetUnitForLengthAdditionOperationResult);
                 Console.WriteLine($"✅ Addition Result: {firstLengthQuantityObjectForAdditionOperation} + {secondLengthQuantityObjectForAdditionOperation} = {additionResultForLengthQuantities}");
             }
             catch (Exception exceptionOccurredDuringLengthAdditionOperationExecution)
@@ -62,11 +62,11 @@ namespace QuantityMeasurementApp.Controllers
             }
         }
 
-        public void PerformSubtractionOfTwoLengthQuantitiesAndDisplayResultInSpecifiedTargetUnit(QuantityDTO firstLengthQuantityObjectForSubtractionOperation, QuantityDTO secondLengthQuantityObjectForSubtractionOperation, string targetUnitForLengthSubtractionOperationResult)
+        public void PerformSubtractionOfTwoLengthQuantitiesAndDisplayResultInSpecifiedTargetUnit(UniversalMeasurementDataCarrierObject firstLengthQuantityObjectForSubtractionOperation, UniversalMeasurementDataCarrierObject secondLengthQuantityObjectForSubtractionOperation, string targetUnitForLengthSubtractionOperationResult)
         {
             try
             {
-                QuantityDTO subtractionResultForLengthQuantities = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.Subtract(firstLengthQuantityObjectForSubtractionOperation, secondLengthQuantityObjectForSubtractionOperation, targetUnitForLengthSubtractionOperationResult);
+                UniversalMeasurementDataCarrierObject subtractionResultForLengthQuantities = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.PerformSubtractionOperationBetweenTwoQuantityObjectsAndReturnResult(firstLengthQuantityObjectForSubtractionOperation, secondLengthQuantityObjectForSubtractionOperation, targetUnitForLengthSubtractionOperationResult);
                 Console.WriteLine($"✅ Subtraction Result: {firstLengthQuantityObjectForSubtractionOperation} - {secondLengthQuantityObjectForSubtractionOperation} = {subtractionResultForLengthQuantities}");
             }
             catch (Exception exceptionOccurredDuringLengthSubtractionOperationExecution)
@@ -75,11 +75,11 @@ namespace QuantityMeasurementApp.Controllers
             }
         }
 
-        public void PerformDivisionOfTwoLengthQuantitiesAndDisplayNumericalResult(QuantityDTO firstLengthQuantityObjectForDivisionOperation, QuantityDTO secondLengthQuantityObjectForDivisionOperation)
+        public void PerformDivisionOfTwoLengthQuantitiesAndDisplayNumericalResult(UniversalMeasurementDataCarrierObject firstLengthQuantityObjectForDivisionOperation, UniversalMeasurementDataCarrierObject secondLengthQuantityObjectForDivisionOperation)
         {
             try
             {
-                double divisionResultForLengthQuantities = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.Divide(firstLengthQuantityObjectForDivisionOperation, secondLengthQuantityObjectForDivisionOperation);
+                double divisionResultForLengthQuantities = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.PerformDivisionOperationBetweenTwoQuantityObjectsAndReturnNumericResult(firstLengthQuantityObjectForDivisionOperation, secondLengthQuantityObjectForDivisionOperation);
                 Console.WriteLine($"✅ Division Result: {firstLengthQuantityObjectForDivisionOperation} / {secondLengthQuantityObjectForDivisionOperation} = {divisionResultForLengthQuantities}");
             }
             catch (Exception exceptionOccurredDuringLengthDivisionOperationExecution)
@@ -90,11 +90,11 @@ namespace QuantityMeasurementApp.Controllers
 
         // ========================== WEIGHT METHODS ==========================
 
-        public void PerformWeightComparisonBetweenTwoGivenWeightQuantitiesAndDisplayResult(QuantityDTO firstWeightQuantityObjectParameter, QuantityDTO secondWeightQuantityObjectParameter)
+        public void PerformWeightComparisonBetweenTwoGivenWeightQuantitiesAndDisplayResult(UniversalMeasurementDataCarrierObject firstWeightQuantityObjectParameter, UniversalMeasurementDataCarrierObject secondWeightQuantityObjectParameter)
         {
             try
             {
-                bool comparisonResultForWeightQuantities = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.Compare(firstWeightQuantityObjectParameter, secondWeightQuantityObjectParameter);
+                bool comparisonResultForWeightQuantities = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.PerformComparisonOperationBetweenTwoQuantityObjectsAndReturnBooleanResult(firstWeightQuantityObjectParameter, secondWeightQuantityObjectParameter);
 
                 if (comparisonResultForWeightQuantities)
                     Console.WriteLine("✅ The given weight values are equal.");
@@ -107,11 +107,11 @@ namespace QuantityMeasurementApp.Controllers
             }
         }
 
-        public void PerformWeightConversionFromOneUnitToAnotherUnitAndDisplayResult(QuantityDTO inputWeightQuantityObjectToBeConverted, string targetUnitForWeightConversionOperation)
+        public void PerformWeightConversionFromOneUnitToAnotherUnitAndDisplayResult(UniversalMeasurementDataCarrierObject inputWeightQuantityObjectToBeConverted, string targetUnitForWeightConversionOperation)
         {
             try
             {
-                QuantityDTO convertedWeightQuantityResult = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.Convert(inputWeightQuantityObjectToBeConverted, targetUnitForWeightConversionOperation);
+                UniversalMeasurementDataCarrierObject convertedWeightQuantityResult = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.PerformConversionOperationBetweenUnitsAndReturnConvertedQuantity(inputWeightQuantityObjectToBeConverted, targetUnitForWeightConversionOperation);
                 Console.WriteLine($"✅ Conversion Result: {inputWeightQuantityObjectToBeConverted} = {convertedWeightQuantityResult}");
             }
             catch (Exception exceptionOccurredDuringWeightConversionOperationExecution)
@@ -120,11 +120,11 @@ namespace QuantityMeasurementApp.Controllers
             }
         }
 
-        public void PerformAdditionOfTwoWeightQuantitiesAndDisplayResult(QuantityDTO firstWeightQuantityObject, QuantityDTO secondWeightQuantityObject, string targetUnitForWeightAddition)
+        public void PerformAdditionOfTwoWeightQuantitiesAndDisplayResult(UniversalMeasurementDataCarrierObject firstWeightQuantityObject, UniversalMeasurementDataCarrierObject secondWeightQuantityObject, string targetUnitForWeightAddition)
         {
             try
             {
-                QuantityDTO result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.Add(firstWeightQuantityObject, secondWeightQuantityObject, targetUnitForWeightAddition);
+                UniversalMeasurementDataCarrierObject result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.PerformAdditionOperationBetweenTwoQuantityObjectsAndReturnResult(firstWeightQuantityObject, secondWeightQuantityObject, targetUnitForWeightAddition);
                 Console.WriteLine($"✅ Addition Result: {firstWeightQuantityObject} + {secondWeightQuantityObject} = {result}");
             }
             catch (Exception ex)
@@ -133,11 +133,11 @@ namespace QuantityMeasurementApp.Controllers
             }
         }
 
-        public void PerformSubtractionOfTwoWeightQuantitiesAndDisplayResult(QuantityDTO firstWeightQuantityObject, QuantityDTO secondWeightQuantityObject, string targetUnitForWeightSubtraction)
+        public void PerformSubtractionOfTwoWeightQuantitiesAndDisplayResult(UniversalMeasurementDataCarrierObject firstWeightQuantityObject, UniversalMeasurementDataCarrierObject secondWeightQuantityObject, string targetUnitForWeightSubtraction)
         {
             try
             {
-                QuantityDTO result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.Subtract(firstWeightQuantityObject, secondWeightQuantityObject, targetUnitForWeightSubtraction);
+                UniversalMeasurementDataCarrierObject result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.PerformSubtractionOperationBetweenTwoQuantityObjectsAndReturnResult(firstWeightQuantityObject, secondWeightQuantityObject, targetUnitForWeightSubtraction);
                 Console.WriteLine($"✅ Subtraction Result: {firstWeightQuantityObject} - {secondWeightQuantityObject} = {result}");
             }
             catch (Exception ex)
@@ -146,11 +146,11 @@ namespace QuantityMeasurementApp.Controllers
             }
         }
 
-        public void PerformDivisionOfTwoWeightQuantitiesAndDisplayResult(QuantityDTO firstWeightQuantityObject, QuantityDTO secondWeightQuantityObject)
+        public void PerformDivisionOfTwoWeightQuantitiesAndDisplayResult(UniversalMeasurementDataCarrierObject firstWeightQuantityObject, UniversalMeasurementDataCarrierObject secondWeightQuantityObject)
         {
             try
             {
-                double result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.Divide(firstWeightQuantityObject, secondWeightQuantityObject);
+                double result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.PerformDivisionOperationBetweenTwoQuantityObjectsAndReturnNumericResult(firstWeightQuantityObject, secondWeightQuantityObject);
                 Console.WriteLine($"✅ Division Result: {firstWeightQuantityObject} / {secondWeightQuantityObject} = {result}");
             }
             catch (Exception ex)
@@ -161,11 +161,11 @@ namespace QuantityMeasurementApp.Controllers
 
         // ========================== VOLUME METHODS ==========================
 
-        public void PerformVolumeComparisonBetweenTwoGivenVolumeQuantitiesAndDisplayResult(QuantityDTO firstVolumeQuantityObject, QuantityDTO secondVolumeQuantityObject)
+        public void PerformVolumeComparisonBetweenTwoGivenVolumeQuantitiesAndDisplayResult(UniversalMeasurementDataCarrierObject firstVolumeQuantityObject, UniversalMeasurementDataCarrierObject secondVolumeQuantityObject)
         {
             try
             {
-                bool result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.Compare(firstVolumeQuantityObject, secondVolumeQuantityObject);
+                bool result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.PerformComparisonOperationBetweenTwoQuantityObjectsAndReturnBooleanResult(firstVolumeQuantityObject, secondVolumeQuantityObject);
                 Console.WriteLine(result ? "✅ The given volume values are equal." : "❌ The given volume values are not equal.");
             }
             catch (Exception ex)
@@ -174,11 +174,11 @@ namespace QuantityMeasurementApp.Controllers
             }
         }
 
-        public void PerformVolumeConversionFromOneUnitToAnotherUnitAndDisplayResult(QuantityDTO inputVolumeQuantityObject, string targetUnitForVolumeConversion)
+        public void PerformVolumeConversionFromOneUnitToAnotherUnitAndDisplayResult(UniversalMeasurementDataCarrierObject inputVolumeQuantityObject, string targetUnitForVolumeConversion)
         {
             try
             {
-                QuantityDTO result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.Convert(inputVolumeQuantityObject, targetUnitForVolumeConversion);
+                UniversalMeasurementDataCarrierObject result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.PerformConversionOperationBetweenUnitsAndReturnConvertedQuantity(inputVolumeQuantityObject, targetUnitForVolumeConversion);
                 Console.WriteLine($"✅ Conversion Result: {inputVolumeQuantityObject} = {result}");
             }
             catch (Exception ex)
@@ -187,11 +187,11 @@ namespace QuantityMeasurementApp.Controllers
             }
         }
 
-        public void PerformVolumeAdditionBetweenTwoVolumeQuantitiesAndDisplayResult(QuantityDTO firstVolumeQuantityObject, QuantityDTO secondVolumeQuantityObject, string targetUnitForVolumeAddition)
+        public void PerformVolumeAdditionBetweenTwoVolumeQuantitiesAndDisplayResult(UniversalMeasurementDataCarrierObject firstVolumeQuantityObject, UniversalMeasurementDataCarrierObject secondVolumeQuantityObject, string targetUnitForVolumeAddition)
         {
             try
             {
-                QuantityDTO result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.Add(firstVolumeQuantityObject, secondVolumeQuantityObject, targetUnitForVolumeAddition);
+                UniversalMeasurementDataCarrierObject result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.PerformAdditionOperationBetweenTwoQuantityObjectsAndReturnResult(firstVolumeQuantityObject, secondVolumeQuantityObject, targetUnitForVolumeAddition);
                 Console.WriteLine($"✅ Addition Result: {firstVolumeQuantityObject} + {secondVolumeQuantityObject} = {result}");
             }
             catch (Exception ex)
@@ -200,11 +200,11 @@ namespace QuantityMeasurementApp.Controllers
             }
         }
 
-        public void PerformVolumeSubtractionBetweenTwoVolumeQuantitiesAndDisplayResult(QuantityDTO firstVolumeQuantityObject, QuantityDTO secondVolumeQuantityObject, string targetUnitForVolumeSubtraction)
+        public void PerformVolumeSubtractionBetweenTwoVolumeQuantitiesAndDisplayResult(UniversalMeasurementDataCarrierObject firstVolumeQuantityObject, UniversalMeasurementDataCarrierObject secondVolumeQuantityObject, string targetUnitForVolumeSubtraction)
         {
             try
             {
-                QuantityDTO result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.Subtract(firstVolumeQuantityObject, secondVolumeQuantityObject, targetUnitForVolumeSubtraction);
+                UniversalMeasurementDataCarrierObject result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.PerformSubtractionOperationBetweenTwoQuantityObjectsAndReturnResult(firstVolumeQuantityObject, secondVolumeQuantityObject, targetUnitForVolumeSubtraction);
                 Console.WriteLine($"✅ Subtraction Result: {firstVolumeQuantityObject} - {secondVolumeQuantityObject} = {result}");
             }
             catch (Exception ex)
@@ -213,11 +213,11 @@ namespace QuantityMeasurementApp.Controllers
             }
         }
 
-        public void PerformVolumeDivisionBetweenTwoVolumeQuantitiesAndDisplayResult(QuantityDTO firstVolumeQuantityObject, QuantityDTO secondVolumeQuantityObject)
+        public void PerformVolumeDivisionBetweenTwoVolumeQuantitiesAndDisplayResult(UniversalMeasurementDataCarrierObject firstVolumeQuantityObject, UniversalMeasurementDataCarrierObject secondVolumeQuantityObject)
         {
             try
             {
-                double result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.Divide(firstVolumeQuantityObject, secondVolumeQuantityObject);
+                double result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.PerformDivisionOperationBetweenTwoQuantityObjectsAndReturnNumericResult(firstVolumeQuantityObject, secondVolumeQuantityObject);
                 Console.WriteLine($"✅ Division Result: {firstVolumeQuantityObject} / {secondVolumeQuantityObject} = {result}");
             }
             catch (Exception ex)
@@ -228,11 +228,11 @@ namespace QuantityMeasurementApp.Controllers
 
         // ========================== TEMPERATURE METHODS ==========================
 
-        public void PerformTemperatureComparisonBetweenTwoTemperatureQuantitiesAndDisplayResult(QuantityDTO firstTemperatureQuantityObject, QuantityDTO secondTemperatureQuantityObject)
+        public void PerformTemperatureComparisonBetweenTwoTemperatureQuantitiesAndDisplayResult(UniversalMeasurementDataCarrierObject firstTemperatureQuantityObject, UniversalMeasurementDataCarrierObject secondTemperatureQuantityObject)
         {
             try
             {
-                bool result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.Compare(firstTemperatureQuantityObject, secondTemperatureQuantityObject);
+                bool result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.PerformComparisonOperationBetweenTwoQuantityObjectsAndReturnBooleanResult(firstTemperatureQuantityObject, secondTemperatureQuantityObject);
                 Console.WriteLine(result ? "✅ The given temperature values are equal." : "❌ The given temperature values are not equal.");
             }
             catch (Exception ex)
@@ -241,11 +241,11 @@ namespace QuantityMeasurementApp.Controllers
             }
         }
 
-        public void PerformTemperatureConversionFromOneUnitToAnotherUnitAndDisplayResult(QuantityDTO inputTemperatureQuantityObject, string targetUnitForTemperatureConversion)
+        public void PerformTemperatureConversionFromOneUnitToAnotherUnitAndDisplayResult(UniversalMeasurementDataCarrierObject inputTemperatureQuantityObject, string targetUnitForTemperatureConversion)
         {
             try
             {
-                QuantityDTO result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.Convert(inputTemperatureQuantityObject, targetUnitForTemperatureConversion);
+                UniversalMeasurementDataCarrierObject result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.PerformConversionOperationBetweenUnitsAndReturnConvertedQuantity(inputTemperatureQuantityObject, targetUnitForTemperatureConversion);
                 Console.WriteLine($"✅ Conversion Result: {inputTemperatureQuantityObject} = {result}");
             }
             catch (Exception ex)
@@ -254,11 +254,11 @@ namespace QuantityMeasurementApp.Controllers
             }
         }
 
-        public void PerformTemperatureArithmeticOperationBetweenTwoTemperatureQuantitiesAndDisplayResult(QuantityDTO firstTemperatureQuantityObject, QuantityDTO secondTemperatureQuantityObject, string targetUnitForTemperatureArithmetic)
+        public void PerformTemperatureArithmeticOperationBetweenTwoTemperatureQuantitiesAndDisplayResult(UniversalMeasurementDataCarrierObject firstTemperatureQuantityObject, UniversalMeasurementDataCarrierObject secondTemperatureQuantityObject, string targetUnitForTemperatureArithmetic)
         {
             try
             {
-                QuantityDTO result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.Add(firstTemperatureQuantityObject, secondTemperatureQuantityObject, targetUnitForTemperatureArithmetic);
+                UniversalMeasurementDataCarrierObject result = extremelyImportantQuantityMeasurementServiceInstanceUsedForAllMeasurementOperations.PerformAdditionOperationBetweenTwoQuantityObjectsAndReturnResult(firstTemperatureQuantityObject, secondTemperatureQuantityObject, targetUnitForTemperatureArithmetic);
                 Console.WriteLine($"✅ Arithmetic Result: {firstTemperatureQuantityObject} + {secondTemperatureQuantityObject} = {result}");
             }
             catch (Exception ex)

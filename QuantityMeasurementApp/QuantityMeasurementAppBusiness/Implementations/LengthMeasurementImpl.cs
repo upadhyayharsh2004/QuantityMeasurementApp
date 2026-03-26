@@ -25,7 +25,7 @@ namespace QuantityMeasurementAppBusiness.Implementations
         /// Stores the current length unit type for this instance.
         /// This determines how conversion and representation will be handled.
         /// </summary>
-        private LengthUnit unit;
+        private LinearMeasurementUnitCategoryIdentifier unit;
 
         /// <summary>
         /// Constructor to initialize the LengthMeasurementImpl object with a specific length unit.
@@ -37,7 +37,7 @@ namespace QuantityMeasurementAppBusiness.Implementations
         /// This sets the context for all operations performed by this object.
         /// </summary>
         /// <param name="unitType">The specific LengthUnit enum value representing the unit.</param>
-        public LengthMeasurementImpl(LengthUnit unitType)
+        public LengthMeasurementImpl(LinearMeasurementUnitCategoryIdentifier unitType)
         {
             unit = unitType;
         }
@@ -60,16 +60,16 @@ namespace QuantityMeasurementAppBusiness.Implementations
         {
             switch (unit)
             {
-                case LengthUnit.Feet:
+                case LinearMeasurementUnitCategoryIdentifier.IMPERIAL_FOOT_BASED_UNIT:
                     return 1.0;
 
-                case LengthUnit.Inch:
+                case LinearMeasurementUnitCategoryIdentifier.IMPERIAL_SMALL_SCALE_UNIT:
                     return 1.0 / 12.0;
 
-                case LengthUnit.Yard:
+                case LinearMeasurementUnitCategoryIdentifier.IMPERIAL_EXTENDED_RANGE_UNIT:
                     return 3.0;
 
-                case LengthUnit.Centimeter:
+                case LinearMeasurementUnitCategoryIdentifier.METRIC_STANDARD_SUBDIVISION_UNIT:
                     return 0.0328084;
 
                 default:
@@ -197,7 +197,7 @@ namespace QuantityMeasurementAppBusiness.Implementations
         /// <returns>A new IMeasurable instance corresponding to the specified unit.</returns>
         public IMeasurable GetUnitByName(string unitName)
         {
-            LengthUnit parsedUnit = (LengthUnit)Enum.Parse(typeof(LengthUnit), unitName, true);
+            LinearMeasurementUnitCategoryIdentifier parsedUnit = (LinearMeasurementUnitCategoryIdentifier)Enum.Parse(typeof(LinearMeasurementUnitCategoryIdentifier), unitName, true);
             return new LengthMeasurementImpl(parsedUnit);
         }
     }

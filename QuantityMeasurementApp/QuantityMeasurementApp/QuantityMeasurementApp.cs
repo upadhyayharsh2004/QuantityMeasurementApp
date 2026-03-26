@@ -50,7 +50,7 @@ namespace QuantityMeasurementApp
         private IMenu menu;
 
         // Repository interface used for storing and retrieving measurement data
-        private IQuantityMeasurementRepository repository;
+        private IExtremelyAdvancedQuantityMeasurementRepositoryHandlingAllDataPersistenceOperations repository;
 
         // Stores the currently active repository type (Database or Cache)
         private string activeRepositoryType;
@@ -63,10 +63,10 @@ namespace QuantityMeasurementApp
             Console.WriteLine("=== Initializing Quantity Measurement Application on the system ===");
 
             // Creating configuration object to read settings from appsettings.json file
-            ApplicationConfig config = new ApplicationConfig();
+            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
 
             // Fetching repository type configuration (either "database" or "cache")
-            string repoType = config.GetRepositoryType();
+            string repoType = config.RetrieveRepositoryImplementationTypeFromConfiguration();
 
             // Displaying configured data source type for debugging and verification purposes
             Console.WriteLine("Configured Data Source on the system: " + repoType);
@@ -113,7 +113,7 @@ namespace QuantityMeasurementApp
         }
 
         // Method to initialize database repository with fallback mechanism
-        private void TryInitializeDatabaseRepository(ApplicationConfig config)
+        private void TryInitializeDatabaseRepository(ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config)
         {
             // Informing user that system is attempting to connect to SQL Server
             Console.WriteLine("Attempting to establish connection with SQL Server on the system...");
@@ -121,10 +121,10 @@ namespace QuantityMeasurementApp
             try
             {
                 // Getting connection pool instance using configuration settings
-                ConnectionPool pool = ConnectionPool.GetInstance(config);
+                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations pool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations.RetrieveSingletonInstanceOfConnectionPoolingManager(config);
 
                 // Creating database repository using connection pool
-                repository = new QuantityMeasurementDatabaseRepository(pool);
+                repository = new AdvancedSqlDataAccessManagerForHandlingMeasurementPersistenceOperations(pool);
 
                 // Setting active repository type
                 activeRepositoryType = "Database (SQL Server)";
@@ -158,7 +158,7 @@ namespace QuantityMeasurementApp
         private void InitializeCacheRepository()
         {
             // Getting singleton instance of cache repository
-            repository = QuantityMeasurementCacheRepository.GetInstance();
+            repository = AdvancedLocalJsonStorageManagerForMeasurementRecords.CreateOrRetrieveStorageManagerInstance();
 
             // Setting repository type description
             activeRepositoryType =
@@ -209,7 +209,7 @@ namespace QuantityMeasurementApp
             Console.WriteLine("Data Source on the system: " + activeRepositoryType);
 
             // Fetching all records from repository
-            List<QuantityMeasurementEntity> all = repository.GetAll();
+            List<ComprehensiveMeasurementOperationDataRecord> all = repository.RetrieveAllStoredQuantityMeasurementEntitiesFromDataStorage();
 
             // Displaying total number of records
             Console.WriteLine("Total Records Found on the system: " + all.Count);
@@ -224,7 +224,7 @@ namespace QuantityMeasurementApp
             Console.WriteLine("-----------------------------------------");
 
             // Displaying pool or cache statistics
-            Console.WriteLine("Resource Info: " + repository.GetPoolStatistics());
+            Console.WriteLine("Resource Info: " + repository.RetrieveDetailedStatisticsInformationAboutRepositoryResourceUsageAndStorageState());
 
             // Closing section
             Console.WriteLine("=========================================\n");
@@ -237,10 +237,10 @@ namespace QuantityMeasurementApp
             Console.WriteLine("Clearing all stored measurement records from the system...");
 
             // Deleting all records from repository
-            repository.DeleteAll();
+            repository.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
 
             // Displaying updated record count
-            Console.WriteLine("Operation completed. Remaining records on the system: " + repository.GetTotalCount());
+            Console.WriteLine("Operation completed. Remaining records on the system: " + repository.RetrieveTotalCountOfAllStoredMeasurementEntitiesFromDataStorage());
         }
 
         // Method to release resources (mainly database connections)
@@ -250,7 +250,7 @@ namespace QuantityMeasurementApp
             Console.WriteLine("Releasing system resources of the system...");
 
             // Calling repository to release resources
-            repository.ReleaseResources();
+            repository.ReleaseAndCleanupAllResourcesUsedByRepositoryImplementation();
 
             // Confirming resource cleanup completion
             Console.WriteLine("All resources have been successfully released from the system.");

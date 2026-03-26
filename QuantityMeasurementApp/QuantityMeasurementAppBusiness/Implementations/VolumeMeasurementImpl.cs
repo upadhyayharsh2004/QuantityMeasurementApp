@@ -26,7 +26,7 @@ namespace QuantityMeasurementAppBusiness.Implementations
         /// Stores the current volume unit for this instance.
         /// This determines how conversion operations will be handled.
         /// </summary>
-        private VolumeUnit unit;
+        private LiquidCapacityMeasurementScaleIdentifier unit;
 
         /// <summary>
         /// Constructor to initialize the VolumeMeasurementImpl object with a specific unit.
@@ -38,9 +38,9 @@ namespace QuantityMeasurementAppBusiness.Implementations
         /// This sets the unit context for all conversions and operations.
         /// </summary>
         /// <param name="unitType">The volume unit type.</param>
-        public VolumeMeasurementImpl(VolumeUnit unitType)
+        public VolumeMeasurementImpl(LiquidCapacityMeasurementScaleIdentifier unitType)
         {
-            unit = unitType;
+            unit = (LiquidCapacityMeasurementScaleIdentifier)unitType;
         }
 
         /// <summary>
@@ -58,13 +58,13 @@ namespace QuantityMeasurementAppBusiness.Implementations
         {
             switch (unit)
             {
-                case VolumeUnit.Litre:
+                case LiquidCapacityMeasurementScaleIdentifier.METRIC_BASE_VOLUME_UNIT:
                     return 1.0;
 
-                case VolumeUnit.Millilitre:
+                case LiquidCapacityMeasurementScaleIdentifier.METRIC_MICRO_VOLUME_UNIT:
                     return 0.001;
 
-                case VolumeUnit.Gallon:
+                case LiquidCapacityMeasurementScaleIdentifier.NON_METRIC_LARGE_CAPACITY_UNIT:
                     return 3.78541;
 
                 default:
@@ -190,7 +190,7 @@ namespace QuantityMeasurementAppBusiness.Implementations
         /// <returns>An IMeasurable instance corresponding to the specified unit.</returns>
         public IMeasurable GetUnitByName(string unitName)
         {
-            VolumeUnit parsedUnit = (VolumeUnit)Enum.Parse(typeof(VolumeUnit), unitName, true);
+            LiquidCapacityMeasurementScaleIdentifier parsedUnit = (LiquidCapacityMeasurementScaleIdentifier)Enum.Parse(typeof(LiquidCapacityMeasurementScaleIdentifier), unitName, true);
             return new VolumeMeasurementImpl(parsedUnit);
         }
     }

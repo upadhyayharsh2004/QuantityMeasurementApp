@@ -27,7 +27,7 @@ namespace QuantityMeasurementAppBusiness.Implementations
         /// Stores the current temperature unit for this instance.
         /// This determines how conversion logic will be applied.
         /// </summary>
-        private TemperatureUnit unit;
+        private ThermalScaleRepresentationIdentifier unit;
 
         /// <summary>
         /// Constructor to initialize the TemperatureMeasurementImpl object
@@ -40,7 +40,7 @@ namespace QuantityMeasurementAppBusiness.Implementations
         /// This sets the context for all conversions and operations.
         /// </summary>
         /// <param name="unitType">The temperature unit type.</param>
-        public TemperatureMeasurementImpl(TemperatureUnit unitType)
+        public TemperatureMeasurementImpl(ThermalScaleRepresentationIdentifier unitType)
         {
             unit = unitType;
         }
@@ -80,13 +80,13 @@ namespace QuantityMeasurementAppBusiness.Implementations
         {
             switch (unit)
             {
-                case TemperatureUnit.Celsius:
+                case ThermalScaleRepresentationIdentifier.STANDARD_METRIC_HEAT_SCALE:
                     return value;
 
-                case TemperatureUnit.Fahrenheit:
+                case ThermalScaleRepresentationIdentifier.REGIONAL_HEAT_MEASUREMENT_SCALE:
                     return (value - 32) * 5 / 9;
 
-                case TemperatureUnit.Kelvin:
+                case ThermalScaleRepresentationIdentifier.ABSOLUTE_ENERGY_SCALE_SYSTEM:
                     return value - 273.15;
 
                 default:
@@ -112,13 +112,13 @@ namespace QuantityMeasurementAppBusiness.Implementations
         {
             switch (unit)
             {
-                case TemperatureUnit.Celsius:
+                case ThermalScaleRepresentationIdentifier.STANDARD_METRIC_HEAT_SCALE:
                     return baseValue;
 
-                case TemperatureUnit.Fahrenheit:
+                case ThermalScaleRepresentationIdentifier.REGIONAL_HEAT_MEASUREMENT_SCALE:
                     return (baseValue * 9 / 5) + 32;
 
-                case TemperatureUnit.Kelvin:
+                case ThermalScaleRepresentationIdentifier.ABSOLUTE_ENERGY_SCALE_SYSTEM:
                     return baseValue + 273.15;
 
                 default:
@@ -208,7 +208,7 @@ namespace QuantityMeasurementAppBusiness.Implementations
         /// <returns>An IMeasurable instance for the specified unit.</returns>
         public IMeasurable GetUnitByName(string unitName)
         {
-            TemperatureUnit parsedUnit = (TemperatureUnit)Enum.Parse(typeof(TemperatureUnit), unitName, true);
+            ThermalScaleRepresentationIdentifier parsedUnit = (ThermalScaleRepresentationIdentifier)Enum.Parse(typeof(ThermalScaleRepresentationIdentifier), unitName, true);
             return new TemperatureMeasurementImpl(parsedUnit);
         }
     }

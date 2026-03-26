@@ -186,20 +186,20 @@ namespace QuantityMeasurementAppBusiness
         /// - Ensures consistency
         /// - Avoids unit mismatch errors
         /// </summary>
-        private double PerformBaseArithmetic(Quantity<U> second, ArithmeticOperation operation)
+        private double PerformBaseArithmetic(Quantity<U> second, MathematicalComputationActionIdentifier operation)
         {
             double firstBase = Unit.ConvertToBaseUnit(this.Value);
             double secondBase = second.Unit.ConvertToBaseUnit(second.Value);
 
-            if (operation == ArithmeticOperation.ADD)
+            if (operation == MathematicalComputationActionIdentifier.COMBINE_VALUES_OPERATION)
             {
                 return firstBase + secondBase;
             }
-            else if (operation == ArithmeticOperation.SUBTRACT)
+            else if (operation == MathematicalComputationActionIdentifier.DIFFERENCE_CALCULATION_OPERATION)
             {
                 return firstBase - secondBase;
             }
-            else if (operation == ArithmeticOperation.DIVIDE)
+            else if (operation == MathematicalComputationActionIdentifier.RATIO_EVALUATION_OPERATION)
             {
                 return firstBase / secondBase;
             }
@@ -215,7 +215,7 @@ namespace QuantityMeasurementAppBusiness
             Unit.ValidateOperationSupport("Addition");
             ValidateArithmeticOperands(second, this.Unit, true);
 
-            double baseResult = PerformBaseArithmetic(second, ArithmeticOperation.ADD);
+            double baseResult = PerformBaseArithmetic(second, MathematicalComputationActionIdentifier.COMBINE_VALUES_OPERATION);
             double resultValue = Unit.ConvertFromBaseUnit(baseResult);
 
             return new Quantity<U>(resultValue, this.Unit);
@@ -229,7 +229,7 @@ namespace QuantityMeasurementAppBusiness
             Unit.ValidateOperationSupport("Addition");
             ValidateArithmeticOperands(second, targetUnit, true);
 
-            double baseResult = PerformBaseArithmetic(second, ArithmeticOperation.ADD);
+            double baseResult = PerformBaseArithmetic(second, MathematicalComputationActionIdentifier.COMBINE_VALUES_OPERATION);
             double resultValue = targetUnit.ConvertFromBaseUnit(baseResult);
 
             return new Quantity<U>(resultValue, targetUnit);
@@ -243,7 +243,7 @@ namespace QuantityMeasurementAppBusiness
             Unit.ValidateOperationSupport("Subtraction");
             ValidateArithmeticOperands(second, this.Unit, true);
 
-            double baseResult = PerformBaseArithmetic(second, ArithmeticOperation.SUBTRACT);
+            double baseResult = PerformBaseArithmetic(second, MathematicalComputationActionIdentifier.DIFFERENCE_CALCULATION_OPERATION);
             double resultValue = Unit.ConvertFromBaseUnit(baseResult);
 
             resultValue = Math.Round(resultValue, 2);
@@ -259,7 +259,7 @@ namespace QuantityMeasurementAppBusiness
             Unit.ValidateOperationSupport("Subtraction");
             ValidateArithmeticOperands(second, targetUnit, true);
 
-            double baseResult = PerformBaseArithmetic(second, ArithmeticOperation.SUBTRACT);
+            double baseResult = PerformBaseArithmetic(second, MathematicalComputationActionIdentifier.DIFFERENCE_CALCULATION_OPERATION);
             double resultValue = targetUnit.ConvertFromBaseUnit(baseResult);
 
             resultValue = Math.Round(resultValue, 2);
@@ -280,7 +280,7 @@ namespace QuantityMeasurementAppBusiness
                 throw new DivideByZeroException("Cannot divide by zero quantity");
             }
 
-            return PerformBaseArithmetic(second, ArithmeticOperation.DIVIDE);
+            return PerformBaseArithmetic(second, MathematicalComputationActionIdentifier.DIFFERENCE_CALCULATION_OPERATION);
         }
 
         /// <summary>

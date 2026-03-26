@@ -88,7 +88,7 @@ namespace QuantityMeasurementAppBusiness.Implementations
         /// Example:
         /// If unit = Gram → all operations will treat values as grams.
         /// </summary>
-        private WeightUnit unit;
+        private MassMeasurementSystemIdentifier unit;
 
         /// <summary>
         /// CONSTRUCTOR:
@@ -104,7 +104,7 @@ namespace QuantityMeasurementAppBusiness.Implementations
         /// 
         /// </summary>
         /// <param name="unitType">The weight unit to be assigned to this instance.</param>
-        public WeightMeasurementImpl(WeightUnit unitType)
+        public WeightMeasurementImpl(MassMeasurementSystemIdentifier unitType)
         {
             unit = unitType;
         }
@@ -133,13 +133,13 @@ namespace QuantityMeasurementAppBusiness.Implementations
         {
             switch (unit)
             {
-                case WeightUnit.Kilogram:
+                case MassMeasurementSystemIdentifier.GLOBAL_STANDARD_MASS_UNIT:
                     return 1.0;
 
-                case WeightUnit.Gram:
+                case MassMeasurementSystemIdentifier.MICRO_SCALE_MASS_UNIT:
                     return 0.001;
 
-                case WeightUnit.Pound:
+                case MassMeasurementSystemIdentifier.REGIONAL_IMPERIAL_MASS_UNIT:
                     return 0.453592;
 
                 default:
@@ -290,7 +290,7 @@ namespace QuantityMeasurementAppBusiness.Implementations
         /// <returns>A new IMeasurable instance for the specified unit.</returns>
         public IMeasurable GetUnitByName(string unitName)
         {
-            WeightUnit parsedUnit = (WeightUnit)Enum.Parse(typeof(WeightUnit), unitName, true);
+            MassMeasurementSystemIdentifier parsedUnit = (MassMeasurementSystemIdentifier)Enum.Parse(typeof(MassMeasurementSystemIdentifier), unitName, true);
             return new WeightMeasurementImpl(parsedUnit);
         }
     }

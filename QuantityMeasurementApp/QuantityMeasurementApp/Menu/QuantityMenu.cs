@@ -196,7 +196,7 @@ namespace QuantityMeasurementApp.Menu
 
         // ========================== INPUT ==========================
 
-        private QuantityDTO Input(string type, string label)
+        private UniversalMeasurementDataCarrierObject Input(string type, string label)
         {
             string prefix = string.IsNullOrEmpty(label) ? "" : label + " ";
 
@@ -212,7 +212,7 @@ namespace QuantityMeasurementApp.Menu
                 return Input(type, label);
             }
 
-            return new QuantityDTO(parsedNumericValue, unitInputFromUser, type);
+            return new UniversalMeasurementDataCarrierObject(parsedNumericValue, unitInputFromUser, type);
         }
     }
 }
