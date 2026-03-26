@@ -60,7 +60,7 @@ namespace QuantityMeasurementApp
         {
             // Displaying application startup message
             // This informs the user that the application initialization process has started
-            Console.WriteLine("=== Initializing Quantity Measurement Application ===");
+            Console.WriteLine("=== Initializing Quantity Measurement Application on the system ===");
 
             // Creating configuration object to read settings from appsettings.json file
             ApplicationConfig config = new ApplicationConfig();
@@ -69,7 +69,7 @@ namespace QuantityMeasurementApp
             string repoType = config.GetRepositoryType();
 
             // Displaying configured data source type for debugging and verification purposes
-            Console.WriteLine("Configured Data Source: " + repoType);
+            Console.WriteLine("Configured Data Source on the system: " + repoType);
 
             // Checking if configuration specifies database usage
             if (repoType.Equals("sql", StringComparison.OrdinalIgnoreCase) ||
@@ -83,7 +83,7 @@ namespace QuantityMeasurementApp
             {
                 // Informing user that cache repository will be used instead of database
                 // This ensures clarity about system behavior
-                Console.WriteLine("Using in-memory cache as the data source (database skipped).");
+                Console.WriteLine("Using in-memory cache as the data source on the system (database skipped).");
 
                 // Initialize cache repository
                 InitializeCacheRepository();
@@ -103,10 +103,10 @@ namespace QuantityMeasurementApp
             menu = new QuantityMenu(controller);
 
             // Informing user that application setup is complete
-            Console.WriteLine("Application setup completed successfully.");
+            Console.WriteLine("Application setup completed successfully on the system.");
 
             // Displaying which repository is currently active
-            Console.WriteLine("Active Data Source: " + activeRepositoryType);
+            Console.WriteLine("Active Data Source on the system: " + activeRepositoryType);
 
             // Adding empty line for better console readability
             Console.WriteLine("");
@@ -116,7 +116,7 @@ namespace QuantityMeasurementApp
         private void TryInitializeDatabaseRepository(ApplicationConfig config)
         {
             // Informing user that system is attempting to connect to SQL Server
-            Console.WriteLine("Attempting to establish connection with SQL Server...");
+            Console.WriteLine("Attempting to establish connection with SQL Server on the system...");
 
             try
             {
@@ -130,7 +130,7 @@ namespace QuantityMeasurementApp
                 activeRepositoryType = "Database (SQL Server)";
 
                 // Informing user that database connection was successful
-                Console.WriteLine("Connection successful. Using database-backed repository.");
+                Console.WriteLine("Connection successful. Using database-backed repository on the system.");
             }
             catch (Exception ex)
             {
@@ -144,7 +144,7 @@ namespace QuantityMeasurementApp
                 Console.WriteLine("Details: " + ex.Message);
 
                 // Informing user that system will switch to fallback mode
-                Console.WriteLine("Switching to fallback mode (in-memory cache).");
+                Console.WriteLine("Switching to fallback mode from sql memory to (in-memory cache).");
 
                 // Adding spacing for readability
                 Console.WriteLine("");
@@ -162,10 +162,10 @@ namespace QuantityMeasurementApp
 
             // Setting repository type description
             activeRepositoryType =
-                "Cache (offline mode - data stored in JSON file)";
+                "Cache (offline mode - data stored in JSON file instead of cache Repository)";
 
             // Informing user that cache repository is ready
-            Console.WriteLine("Cache repository initialized successfully.");
+            Console.WriteLine("Cache repository initialized successfully on the System.");
         }
 
         // Singleton method to get application instance
@@ -190,29 +190,29 @@ namespace QuantityMeasurementApp
         }
 
         // Method to start application
-        public void Start()
+        public void StartTheEntireQuantityMeasurementApplicationExecutionProcess()
         {
             // Informing user that application is starting main menu
-            Console.WriteLine("Launching application menu...");
+            Console.WriteLine("Launching application menu of QuantityApp...");
 
             // Running menu loop (user interaction begins here)
             menu.Run();
         }
 
         // Method to display all stored measurement records
-        public void ReportAllMeasurements()
+        public void GenerateAndDisplayCompleteMeasurementOperationsReportToUser()
         {
             // Printing header section
-            Console.WriteLine("\n========== Measurement History ==========");
+            Console.WriteLine("\n========== Measurement History Of Quantity App ==========");
 
             // Displaying active repository type
-            Console.WriteLine("Data Source: " + activeRepositoryType);
+            Console.WriteLine("Data Source on the system: " + activeRepositoryType);
 
             // Fetching all records from repository
             List<QuantityMeasurementEntity> all = repository.GetAll();
 
             // Displaying total number of records
-            Console.WriteLine("Total Records Found: " + all.Count);
+            Console.WriteLine("Total Records Found on the system: " + all.Count);
 
             // Iterating through all records and printing each one
             for (int i = 0; i < all.Count; i++)
@@ -234,26 +234,26 @@ namespace QuantityMeasurementApp
         public void DeleteAllMeasurements()
         {
             // Informing user that deletion process has started
-            Console.WriteLine("Clearing all stored measurement records...");
+            Console.WriteLine("Clearing all stored measurement records from the system...");
 
             // Deleting all records from repository
             repository.DeleteAll();
 
             // Displaying updated record count
-            Console.WriteLine("Operation completed. Remaining records: " + repository.GetTotalCount());
+            Console.WriteLine("Operation completed. Remaining records on the system: " + repository.GetTotalCount());
         }
 
         // Method to release resources (mainly database connections)
-        public void CloseResources()
+        public void ReleaseAndCleanupAllApplicationResourcesBeforeShutdown()
         {
             // Informing user that resource cleanup is starting
-            Console.WriteLine("Releasing system resources...");
+            Console.WriteLine("Releasing system resources of the system...");
 
             // Calling repository to release resources
             repository.ReleaseResources();
 
             // Confirming resource cleanup completion
-            Console.WriteLine("All resources have been successfully released.");
+            Console.WriteLine("All resources have been successfully released from the system.");
         }
     }
 }

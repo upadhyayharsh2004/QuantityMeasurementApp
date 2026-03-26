@@ -18,7 +18,7 @@ namespace QuantityMeasurementApp.Tests
     public class QuantityMeasurementDBTests
     {
         // -------------------------------------------------------
-        // ApplicationConfig Tests
+        // ApplicationConfig Tests For QuantityApp
         // -------------------------------------------------------
 
         //Test ApplicationConfig loads connection string from appsettings.json

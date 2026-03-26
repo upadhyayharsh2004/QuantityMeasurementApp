@@ -11,283 +11,236 @@ using QuantityMeasurementAppModels.Enums;
 
 namespace QuantityMeasurementApp.Services
 {
-    /*
-     * ============================================================================================
-     * CLASS: QuantityMeasurementServiceImpl
-     * 
-     * This class represents the SERVICE LAYER of the application.
-     * It acts as a bridge between:
-     * 
-     * - Presentation Layer (UI / Controller)
-     * - Business Logic Layer (Quantity, IMeasurable implementations)
-     * - Data Access Layer (Repository)
-     * 
-     * Responsibilities:
-     * --------------------------------------------------------------------------------------------
-     * - Perform operations like Add, Subtract, Divide, Compare, Convert
-     * - Convert input DTOs into business objects (Quantity<IMeasurable>)
-     * - Resolve units dynamically based on input strings
-     * - Handle exceptions and log them into the repository
-     * - Return results back as DTOs
-     * 
-     * Design Principles Used:
-     * --------------------------------------------------------------------------------------------
-     * - Dependency Injection (repository injected via constructor)
-     * - Separation of Concerns
-     * - Abstraction via interfaces (IMeasurable, Repository)
-     * ============================================================================================
-     */
     public class QuantityMeasurementServiceImpl : IQuantityMeasurementService
     {
         // Repository used to persist operation results
-        private readonly IQuantityMeasurementRepository repository;
+        private readonly IQuantityMeasurementRepository extremelyImportantRepositoryInstanceUsedForPersistingAllMeasurementOperations;
 
-        /*
-         * ========================================================================================
-         * CONSTRUCTOR
-         * 
-         * Injects repository dependency.
-         * This allows flexibility (cache or database implementation).
-         * ========================================================================================
-         */
-        public QuantityMeasurementServiceImpl(IQuantityMeasurementRepository repository)
+        public QuantityMeasurementServiceImpl(IQuantityMeasurementRepository incomingRepositoryDependencyObject)
         {
-            this.repository = repository;
+            this.extremelyImportantRepositoryInstanceUsedForPersistingAllMeasurementOperations = incomingRepositoryDependencyObject;
         }
 
-        /*
-         * ========================================================================================
-         * METHOD: ResolveUnit (CORE HELPER METHOD)
-         * 
-         * Converts a string-based unit into a concrete IMeasurable implementation.
-         * 
-         * Example:
-         * - ("length", "Feet") → LengthMeasurementImpl(LengthUnit.Feet)
-         * 
-         * Why this is important:
-         * ----------------------------------------------------------------------------------------
-         * - Decouples UI input from business logic
-         * - Dynamically supports multiple measurement types
-         * - Centralizes unit resolution logic
-         * ========================================================================================
-         */
-        private IMeasurable ResolveUnit(string measurementType, string unitName)
+        // Helper method to resolve unit dynamically
+        private IMeasurable ResolveUnit(string measurementTypeInputParameter, string unitNameInputParameter)
         {
-            switch (measurementType.ToLower())
+            switch (measurementTypeInputParameter.ToLower())
             {
                 case "length":
-                    LengthUnit lu = (LengthUnit)Enum.Parse(
-                        typeof(LengthUnit), unitName, true);
-                    return new LengthMeasurementImpl(lu);
+                    LengthUnit resolvedLengthUnitEnumValue = (LengthUnit)Enum.Parse(
+                        typeof(LengthUnit), unitNameInputParameter, true);
+                    return new LengthMeasurementImpl(resolvedLengthUnitEnumValue);
 
                 case "weight":
-                    WeightUnit wu = (WeightUnit)Enum.Parse(
-                        typeof(WeightUnit), unitName, true);
-                    return new WeightMeasurementImpl(wu);
+                    WeightUnit resolvedWeightUnitEnumValue = (WeightUnit)Enum.Parse(
+                        typeof(WeightUnit), unitNameInputParameter, true);
+                    return new WeightMeasurementImpl(resolvedWeightUnitEnumValue);
 
                 case "volume":
-                    VolumeUnit vu = (VolumeUnit)Enum.Parse(
-                        typeof(VolumeUnit), unitName, true);
-                    return new VolumeMeasurementImpl(vu);
+                    VolumeUnit resolvedVolumeUnitEnumValue = (VolumeUnit)Enum.Parse(
+                        typeof(VolumeUnit), unitNameInputParameter, true);
+                    return new VolumeMeasurementImpl(resolvedVolumeUnitEnumValue);
 
                 case "temperature":
-                    TemperatureUnit tu = (TemperatureUnit)Enum.Parse(
-                        typeof(TemperatureUnit), unitName, true);
-                    return new TemperatureMeasurementImpl(tu);
+                    TemperatureUnit resolvedTemperatureUnitEnumValue = (TemperatureUnit)Enum.Parse(
+                        typeof(TemperatureUnit), unitNameInputParameter, true);
+                    return new TemperatureMeasurementImpl(resolvedTemperatureUnitEnumValue);
 
                 default:
                     throw new ArgumentException(
-                        "Unknown measurement type: " + measurementType);
+                        "❌ Unsupported measurement type provided: " + measurementTypeInputParameter);
             }
         }
 
-        /*
-         * ========================================================================================
-         * METHOD: Add
-         * 
-         * Adds two quantities and converts the result into a target unit.
-         * ========================================================================================
-         */
-        public QuantityDTO Add(QuantityDTO first, QuantityDTO second,
-            string targetUnit)
+        // ========================== ADD ==========================
+        public QuantityDTO Add(QuantityDTO firstQuantityInputObject, QuantityDTO secondQuantityInputObject,
+            string targetUnitForAdditionOperation)
         {
             try
             {
-                /*
-                 * Resolve units into business logic implementations
-                 */
-                IMeasurable unit1 = ResolveUnit(first.MeasurementType, first.UnitName);
-                IMeasurable unit2 = ResolveUnit(second.MeasurementType, second.UnitName);
-                IMeasurable target = ResolveUnit(first.MeasurementType, targetUnit);
+                IMeasurable firstResolvedUnitObject = ResolveUnit(firstQuantityInputObject.MeasurementType, firstQuantityInputObject.UnitName);
+                IMeasurable secondResolvedUnitObject = ResolveUnit(secondQuantityInputObject.MeasurementType, secondQuantityInputObject.UnitName);
+                IMeasurable targetResolvedUnitObject = ResolveUnit(firstQuantityInputObject.MeasurementType, targetUnitForAdditionOperation);
 
-                /*
-                 * Create Quantity objects and perform addition
-                 */
-                Quantity<IMeasurable> q1 = new Quantity<IMeasurable>(first.Value, unit1);
-                Quantity<IMeasurable> q2 = new Quantity<IMeasurable>(second.Value, unit2);
-                Quantity<IMeasurable> result = q1.Add(q2, target);
+                Quantity<IMeasurable> firstQuantityBusinessObject = new Quantity<IMeasurable>(firstQuantityInputObject.Value, firstResolvedUnitObject);
+                Quantity<IMeasurable> secondQuantityBusinessObject = new Quantity<IMeasurable>(secondQuantityInputObject.Value, secondResolvedUnitObject);
 
-                /*
-                 * Save successful operation in repository
-                 */
-                repository.Save(new QuantityMeasurementEntity(
-                    "Add",
-                    first.Value, first.UnitName,
-                    second.Value, second.UnitName,
-                    result.GetValue(),
-                    first.MeasurementType));
+                Quantity<IMeasurable> additionResultQuantityObject =
+                    firstQuantityBusinessObject.Add(secondQuantityBusinessObject, targetResolvedUnitObject);
 
-                /*
-                 * Return result as DTO
-                 */
-                return new QuantityDTO(result.GetValue(), targetUnit, first.MeasurementType);
+                extremelyImportantRepositoryInstanceUsedForPersistingAllMeasurementOperations.Save(
+                    new QuantityMeasurementEntity(
+                        "Add",
+                        firstQuantityInputObject.Value, firstQuantityInputObject.UnitName,
+                        secondQuantityInputObject.Value, secondQuantityInputObject.UnitName,
+                        additionResultQuantityObject.GetValue(),
+                        firstQuantityInputObject.MeasurementType));
+
+                return new QuantityDTO(
+                    additionResultQuantityObject.GetValue(),
+                    targetUnitForAdditionOperation,
+                    firstQuantityInputObject.MeasurementType);
             }
-            catch (Exception ex)
+            catch (Exception exceptionOccurredDuringAdditionOperation)
             {
-                // Log error and rethrow custom exception
-                repository.Save(new QuantityMeasurementEntity("Add", ex.Message));
+                extremelyImportantRepositoryInstanceUsedForPersistingAllMeasurementOperations.Save(
+                    new QuantityMeasurementEntity("Add", exceptionOccurredDuringAdditionOperation.Message));
+
                 throw new QuantityMeasurementException(
-                    "Add operation failed: " + ex.Message, ex);
+                    "❌ Addition operation failed due to error: " + exceptionOccurredDuringAdditionOperation.Message,
+                    exceptionOccurredDuringAdditionOperation);
             }
         }
 
-        /*
-         * ========================================================================================
-         * METHOD: Subtract
-         * ========================================================================================
-         */
-        public QuantityDTO Subtract(QuantityDTO first, QuantityDTO second,
-            string targetUnit)
+        // ========================== SUBTRACT ==========================
+        public QuantityDTO Subtract(QuantityDTO firstQuantityInputObject, QuantityDTO secondQuantityInputObject,
+            string targetUnitForSubtractionOperation)
         {
             try
             {
-                IMeasurable unit1 = ResolveUnit(first.MeasurementType, first.UnitName);
-                IMeasurable unit2 = ResolveUnit(second.MeasurementType, second.UnitName);
-                IMeasurable target = ResolveUnit(first.MeasurementType, targetUnit);
+                IMeasurable firstResolvedUnitObject = ResolveUnit(firstQuantityInputObject.MeasurementType, firstQuantityInputObject.UnitName);
+                IMeasurable secondResolvedUnitObject = ResolveUnit(secondQuantityInputObject.MeasurementType, secondQuantityInputObject.UnitName);
+                IMeasurable targetResolvedUnitObject = ResolveUnit(firstQuantityInputObject.MeasurementType, targetUnitForSubtractionOperation);
 
-                Quantity<IMeasurable> q1 = new Quantity<IMeasurable>(first.Value, unit1);
-                Quantity<IMeasurable> q2 = new Quantity<IMeasurable>(second.Value, unit2);
-                Quantity<IMeasurable> result = q1.Subtract(q2, target);
+                Quantity<IMeasurable> firstQuantityBusinessObject = new Quantity<IMeasurable>(firstQuantityInputObject.Value, firstResolvedUnitObject);
+                Quantity<IMeasurable> secondQuantityBusinessObject = new Quantity<IMeasurable>(secondQuantityInputObject.Value, secondResolvedUnitObject);
 
-                repository.Save(new QuantityMeasurementEntity(
-                    "Subtract",
-                    first.Value, first.UnitName,
-                    second.Value, second.UnitName,
-                    result.GetValue(),
-                    first.MeasurementType));
+                Quantity<IMeasurable> subtractionResultQuantityObject =
+                    firstQuantityBusinessObject.Subtract(secondQuantityBusinessObject, targetResolvedUnitObject);
+
+                extremelyImportantRepositoryInstanceUsedForPersistingAllMeasurementOperations.Save(
+                    new QuantityMeasurementEntity(
+                        "Subtract",
+                        firstQuantityInputObject.Value, firstQuantityInputObject.UnitName,
+                        secondQuantityInputObject.Value, secondQuantityInputObject.UnitName,
+                        subtractionResultQuantityObject.GetValue(),
+                        firstQuantityInputObject.MeasurementType));
 
                 return new QuantityDTO(
-                    result.GetValue(), targetUnit, first.MeasurementType);
+                    subtractionResultQuantityObject.GetValue(),
+                    targetUnitForSubtractionOperation,
+                    firstQuantityInputObject.MeasurementType);
             }
-            catch (Exception ex)
+            catch (Exception exceptionOccurredDuringSubtractionOperation)
             {
-                repository.Save(new QuantityMeasurementEntity("Subtract", ex.Message));
-                throw new QuantityMeasurementException("Subtract operation failed: " + ex.Message, ex);
-            }
-        }
+                extremelyImportantRepositoryInstanceUsedForPersistingAllMeasurementOperations.Save(
+                    new QuantityMeasurementEntity("Subtract", exceptionOccurredDuringSubtractionOperation.Message));
 
-        /*
-         * ========================================================================================
-         * METHOD: Divide
-         * 
-         * Divides two quantities and returns a numeric result.
-         * ========================================================================================
-         */
-        public double Divide(QuantityDTO first, QuantityDTO second)
-        {
-            try
-            {
-                IMeasurable unit1 = ResolveUnit(first.MeasurementType, first.UnitName);
-                IMeasurable unit2 = ResolveUnit(second.MeasurementType, second.UnitName);
-
-                Quantity<IMeasurable> q1 = new Quantity<IMeasurable>(first.Value, unit1);
-                Quantity<IMeasurable> q2 = new Quantity<IMeasurable>(second.Value, unit2);
-                double result = q1.Divide(q2);
-
-                repository.Save(new QuantityMeasurementEntity(
-                    "Divide",
-                    first.Value, first.UnitName,
-                    second.Value, second.UnitName,
-                    result,
-                    first.MeasurementType));
-
-                return result;
-            }
-            catch (Exception ex)
-            {
-                repository.Save(new QuantityMeasurementEntity("Divide", ex.Message));
-                throw new QuantityMeasurementException("Divide operation failed: " + ex.Message, ex);
+                throw new QuantityMeasurementException(
+                    "❌ Subtraction operation failed due to error: " + exceptionOccurredDuringSubtractionOperation.Message,
+                    exceptionOccurredDuringSubtractionOperation);
             }
         }
 
-        /*
-         * ========================================================================================
-         * METHOD: Compare
-         * 
-         * Compares two quantities and returns true/false.
-         * ========================================================================================
-         */
-        public bool Compare(QuantityDTO first, QuantityDTO second)
+        // ========================== DIVIDE ==========================
+        public double Divide(QuantityDTO firstQuantityInputObject, QuantityDTO secondQuantityInputObject)
         {
             try
             {
-                IMeasurable unit1 = ResolveUnit(first.MeasurementType, first.UnitName);
-                IMeasurable unit2 = ResolveUnit(second.MeasurementType, second.UnitName);
+                IMeasurable firstResolvedUnitObject = ResolveUnit(firstQuantityInputObject.MeasurementType, firstQuantityInputObject.UnitName);
+                IMeasurable secondResolvedUnitObject = ResolveUnit(secondQuantityInputObject.MeasurementType, secondQuantityInputObject.UnitName);
 
-                Quantity<IMeasurable> q1 = new Quantity<IMeasurable>(first.Value, unit1);
-                Quantity<IMeasurable> q2 = new Quantity<IMeasurable>(second.Value, unit2);
-                bool result = q1.Equals(q2);
+                Quantity<IMeasurable> firstQuantityBusinessObject = new Quantity<IMeasurable>(firstQuantityInputObject.Value, firstResolvedUnitObject);
+                Quantity<IMeasurable> secondQuantityBusinessObject = new Quantity<IMeasurable>(secondQuantityInputObject.Value, secondResolvedUnitObject);
 
-                repository.Save(new QuantityMeasurementEntity(
-                    "Compare",
-                    first.Value, first.UnitName,
-                    second.Value, second.UnitName,
-                    result ? 1 : 0,
-                    first.MeasurementType));
+                double divisionResultNumericValue =
+                    firstQuantityBusinessObject.Divide(secondQuantityBusinessObject);
 
-                return result;
+                extremelyImportantRepositoryInstanceUsedForPersistingAllMeasurementOperations.Save(
+                    new QuantityMeasurementEntity(
+                        "Divide",
+                        firstQuantityInputObject.Value, firstQuantityInputObject.UnitName,
+                        secondQuantityInputObject.Value, secondQuantityInputObject.UnitName,
+                        divisionResultNumericValue,
+                        firstQuantityInputObject.MeasurementType));
+
+                return divisionResultNumericValue;
             }
-            catch (Exception ex)
+            catch (Exception exceptionOccurredDuringDivisionOperation)
             {
-                repository.Save(new QuantityMeasurementEntity("Compare", ex.Message));
-                throw new QuantityMeasurementException("Compare operation failed: " + ex.Message, ex);
+                extremelyImportantRepositoryInstanceUsedForPersistingAllMeasurementOperations.Save(
+                    new QuantityMeasurementEntity("Divide", exceptionOccurredDuringDivisionOperation.Message));
+
+                throw new QuantityMeasurementException(
+                    "❌ Division operation failed due to error: " + exceptionOccurredDuringDivisionOperation.Message,
+                    exceptionOccurredDuringDivisionOperation);
             }
         }
 
-        /*
-         * ========================================================================================
-         * METHOD: Convert
-         * 
-         * Converts a quantity from one unit to another.
-         * ========================================================================================
-         */
-        public QuantityDTO Convert(QuantityDTO quantity, string targetUnit)
+        // ========================== COMPARE ==========================
+        public bool Compare(QuantityDTO firstQuantityInputObject, QuantityDTO secondQuantityInputObject)
         {
             try
             {
-                IMeasurable unit = ResolveUnit(
-                    quantity.MeasurementType, quantity.UnitName);
-                IMeasurable target = ResolveUnit(
-                    quantity.MeasurementType, targetUnit);
+                IMeasurable firstResolvedUnitObject = ResolveUnit(firstQuantityInputObject.MeasurementType, firstQuantityInputObject.UnitName);
+                IMeasurable secondResolvedUnitObject = ResolveUnit(secondQuantityInputObject.MeasurementType, secondQuantityInputObject.UnitName);
 
-                Quantity<IMeasurable> q = new Quantity<IMeasurable>(
-                    quantity.Value, unit);
-                Quantity<IMeasurable> result = q.ConvertTo(target);
+                Quantity<IMeasurable> firstQuantityBusinessObject = new Quantity<IMeasurable>(firstQuantityInputObject.Value, firstResolvedUnitObject);
+                Quantity<IMeasurable> secondQuantityBusinessObject = new Quantity<IMeasurable>(secondQuantityInputObject.Value, secondResolvedUnitObject);
 
-                repository.Save(new QuantityMeasurementEntity(
-                    "Convert",
-                    quantity.Value, quantity.UnitName,
-                    result.GetValue(),
-                    quantity.MeasurementType));
+                bool comparisonResultBooleanValue =
+                    firstQuantityBusinessObject.Equals(secondQuantityBusinessObject);
+
+                extremelyImportantRepositoryInstanceUsedForPersistingAllMeasurementOperations.Save(
+                    new QuantityMeasurementEntity(
+                        "Compare",
+                        firstQuantityInputObject.Value, firstQuantityInputObject.UnitName,
+                        secondQuantityInputObject.Value, secondQuantityInputObject.UnitName,
+                        comparisonResultBooleanValue ? 1 : 0,
+                        firstQuantityInputObject.MeasurementType));
+
+                return comparisonResultBooleanValue;
+            }
+            catch (Exception exceptionOccurredDuringComparisonOperation)
+            {
+                extremelyImportantRepositoryInstanceUsedForPersistingAllMeasurementOperations.Save(
+                    new QuantityMeasurementEntity("Compare", exceptionOccurredDuringComparisonOperation.Message));
+
+                throw new QuantityMeasurementException(
+                    "❌ Comparison operation failed due to error: " + exceptionOccurredDuringComparisonOperation.Message,
+                    exceptionOccurredDuringComparisonOperation);
+            }
+        }
+
+        // ========================== CONVERT ==========================
+        public QuantityDTO Convert(QuantityDTO inputQuantityObjectForConversion, string targetUnitForConversionOperation)
+        {
+            try
+            {
+                IMeasurable sourceResolvedUnitObject =
+                    ResolveUnit(inputQuantityObjectForConversion.MeasurementType, inputQuantityObjectForConversion.UnitName);
+
+                IMeasurable targetResolvedUnitObject =
+                    ResolveUnit(inputQuantityObjectForConversion.MeasurementType, targetUnitForConversionOperation);
+
+                Quantity<IMeasurable> sourceQuantityBusinessObject =
+                    new Quantity<IMeasurable>(inputQuantityObjectForConversion.Value, sourceResolvedUnitObject);
+
+                Quantity<IMeasurable> convertedResultQuantityObject =
+                    sourceQuantityBusinessObject.ConvertTo(targetResolvedUnitObject);
+
+                extremelyImportantRepositoryInstanceUsedForPersistingAllMeasurementOperations.Save(
+                    new QuantityMeasurementEntity(
+                        "Convert",
+                        inputQuantityObjectForConversion.Value,
+                        inputQuantityObjectForConversion.UnitName,
+                        convertedResultQuantityObject.GetValue(),
+                        inputQuantityObjectForConversion.MeasurementType));
 
                 return new QuantityDTO(
-                    result.GetValue(), targetUnit, quantity.MeasurementType);
+                    convertedResultQuantityObject.GetValue(),
+                    targetUnitForConversionOperation,
+                    inputQuantityObjectForConversion.MeasurementType);
             }
-            catch (Exception ex)
+            catch (Exception exceptionOccurredDuringConversionOperation)
             {
-                repository.Save(new QuantityMeasurementEntity("Convert", ex.Message));
-                throw new QuantityMeasurementException("Convert operation failed: " + ex.Message, ex);
-            } 
+                extremelyImportantRepositoryInstanceUsedForPersistingAllMeasurementOperations.Save(
+                    new QuantityMeasurementEntity("Convert", exceptionOccurredDuringConversionOperation.Message));
+
+                throw new QuantityMeasurementException(
+                    "❌ Conversion operation failed due to error: " + exceptionOccurredDuringConversionOperation.Message,
+                    exceptionOccurredDuringConversionOperation);
+            }
         }
     }
 }
