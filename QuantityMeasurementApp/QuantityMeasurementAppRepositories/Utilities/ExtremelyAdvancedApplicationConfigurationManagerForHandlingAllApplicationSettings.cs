@@ -212,5 +212,9 @@ namespace QuantityMeasurementAppRepositories.Utilities
         {
             return RetrieveConfigurationValueBasedOnKeyOrReturnDefaultValueIfNotFound("Database:Provider", "sqlserver");
         }
+        public int RetrieveDatabaseConnectionTimeoutDurationFromConfiguration()
+        {
+            return RetrieveDatabaseConnectionTimeoutValueFromConfiguration();
+        }
     }
 }

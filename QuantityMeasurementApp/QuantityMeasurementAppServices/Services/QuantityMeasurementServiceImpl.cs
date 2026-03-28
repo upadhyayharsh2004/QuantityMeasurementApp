@@ -26,8 +26,14 @@ namespace QuantityMeasurementApp.Services
             switch (incomingMeasurementTypeParameter.ToLower())
             {
                 case "length":
-                    LinearMeasurementUnitCategoryIdentifier resolvedLengthUnitEnumValue = (LinearMeasurementUnitCategoryIdentifier)Enum.Parse(typeof(LinearMeasurementUnitCategoryIdentifier), incomingUnitNameParameter, true);
-                    return new LengthMeasurementImpl(resolvedLengthUnitEnumValue);
+                    {
+                        if (!Enum.TryParse<LinearMeasurementUnitCategoryIdentifier>(incomingUnitNameParameter, true, out var resolvedLengthUnitEnumValue))
+                        {
+                            throw new ArgumentException("❌ Invalid Length Unit: " + incomingUnitNameParameter);
+                        }
+
+                        return new LengthMeasurementImpl(resolvedLengthUnitEnumValue);
+                    }
 
                 case "weight":
                     MassMeasurementSystemIdentifier resolvedWeightUnitEnumValue = (MassMeasurementSystemIdentifier)Enum.Parse(typeof(MassMeasurementSystemIdentifier), incomingUnitNameParameter, true);
@@ -131,8 +137,7 @@ namespace QuantityMeasurementApp.Services
         }
 
         // ========================== DIVIDE ==========================
-        public double PerformDivisionOperationBetweenTwoQuantityObjectsAndReturnNumericResult(
-    UniversalMeasurementDataCarrierObject firstQuantityInputObjectForDivision,
+        public double PerformDivisionOperationBetweenTwoQuantityObjectsAndReturnNumericResult(UniversalMeasurementDataCarrierObject firstQuantityInputObjectForDivision,
     UniversalMeasurementDataCarrierObject secondQuantityInputObjectForDivision)
         {
             try

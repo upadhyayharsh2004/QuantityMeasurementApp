@@ -34,5 +34,9 @@ namespace QuantityMeasurementAppRepositories.Interfaces
 
         // ========================== RELEASE ==========================
         void ReleaseAndCleanupAllResourcesUsedByRepositoryImplementation();
+
+        List<ComprehensiveMeasurementOperationDataRecord>RetrieveMeasurementEntitiesFilteredByOperationType(string operationType);
+
+        List<ComprehensiveMeasurementOperationDataRecord>RetrieveMeasurementEntitiesFilteredByMeasurementCategoryType(string measurementType);
     }
 }

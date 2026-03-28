@@ -9,7 +9,9 @@ namespace QuantityMeasurementAppRepositories.Utilities
     {
         private static ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations extremelyImportantSingletonInstanceOfConnectionPoolingManager;
 
+
         private static readonly object extremelyCriticalSynchronizationLockObjectForThreadSafety = new object();
+
 
         private Stack<SqlConnection> extremelyImportantCollectionOfReusableDatabaseConnectionsStoredInStackStructure;
 
@@ -208,9 +210,30 @@ namespace QuantityMeasurementAppRepositories.Utilities
             }
         }
 
+
         public static ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations GetInstance(ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config)
         {
-            throw new NotImplementedException();
+            return RetrieveSingletonInstanceOfConnectionPoolingManager(config);
+        }
+        public void ReturnConnection(object connection)
+        {
+            // do nothing
+        }
+
+        public string RetrieveDetailedStatisticsInformationAboutRepositoryResourceUsageAndStorageState()
+        {
+            return $"Total created: {extremelyImportantCounterTrackingTotalNumberOfConnectionsCreated}, " +
+                   $"Idle: {extremelyImportantCollectionOfReusableDatabaseConnectionsStoredInStackStructure.Count}, " +
+                   $"Max: {extremelyImportantMaximumLimitForDatabaseConnectionPoolSize}";
+        }
+        public SqlConnection GetConnection()
+        {
+            return RetrieveAvailableConnectionFromPoolOrCreateNewOneIfRequired();
+        }
+
+        public void ReturnConnection(SqlConnection connection)
+        {
+            ReturnDatabaseConnectionBackToPoolAfterUsage(connection);
         }
     }
 }

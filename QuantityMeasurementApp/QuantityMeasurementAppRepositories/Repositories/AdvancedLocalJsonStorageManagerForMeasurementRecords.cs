@@ -5,6 +5,7 @@ using System.Text.Json;
 using QuantityMeasurementAppModels.Entities;
 using QuantityMeasurementAppRepositories.Interfaces;
 
+
 namespace QuantityMeasurementAppRepositories.Repositories
 {
     public class AdvancedLocalJsonStorageManagerForMeasurementRecords : IExtremelyAdvancedQuantityMeasurementRepositoryHandlingAllDataPersistenceOperations
@@ -180,7 +181,20 @@ namespace QuantityMeasurementAppRepositories.Repositories
 
         public static IExtremelyAdvancedQuantityMeasurementRepositoryHandlingAllDataPersistenceOperations GetInstance()
         {
-            throw new NotImplementedException();
+            return CreateOrRetrieveStorageManagerInstance();
+        }
+        // ===== FIX FOR INTERFACE METHODS =====
+
+        public List<ComprehensiveMeasurementOperationDataRecord>
+            RetrieveMeasurementEntitiesFilteredByOperationType(string operationType)
+        {
+            return RetrieveAllMeasurementEntitiesBasedOnSpecificOperationType(operationType);
+        }
+
+        public List<ComprehensiveMeasurementOperationDataRecord>
+            RetrieveMeasurementEntitiesFilteredByMeasurementCategoryType(string measurementType)
+        {
+            return RetrieveAllMeasurementEntitiesBasedOnMeasurementCategoryType(measurementType);
         }
     }
 }

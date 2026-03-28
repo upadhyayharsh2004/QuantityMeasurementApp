@@ -81,6 +81,19 @@ namespace QuantityMeasurementAppRepositories.Repositories
                     .ReturnDatabaseConnectionBackToPoolAfterUsage(activeDatabaseConnection);
             }
         }
+        // ===== FIX FOR INTERFACE METHODS =====
+
+        public List<ComprehensiveMeasurementOperationDataRecord>
+            RetrieveMeasurementEntitiesFilteredByOperationType(string operationType)
+        {
+            return RetrieveAllMeasurementEntitiesBasedOnSpecificOperationType(operationType);
+        }
+
+        public List<ComprehensiveMeasurementOperationDataRecord>
+            RetrieveMeasurementEntitiesFilteredByMeasurementCategoryType(string measurementType)
+        {
+            return RetrieveAllMeasurementEntitiesBasedOnMeasurementCategoryType(measurementType);
+        }
 
         // ========================== FETCH ALL ==========================
         public List<ComprehensiveMeasurementOperationDataRecord> RetrieveAllStoredQuantityMeasurementEntitiesFromDataStorage()
