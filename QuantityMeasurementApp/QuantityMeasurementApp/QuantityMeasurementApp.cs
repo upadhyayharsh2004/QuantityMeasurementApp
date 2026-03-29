@@ -1,259 +1,151 @@
-// Importing base system functionalities like Console operations, Exception handling, etc.
 using System;
-
-// Importing generic collections such as List<T> to store multiple measurement records
 using System.Collections.Generic;
-
-// Importing controller layer which handles communication between UI and service layer
 using QuantityMeasurementApp.Controllers;
-
-// Importing interfaces to ensure loose coupling and abstraction
 using QuantityMeasurementApp.Interfaces;
-
-// Importing menu implementation which provides console-based UI interaction
 using QuantityMeasurementApp.Menu;
-
-// Importing service layer implementation where business logic resides
 using QuantityMeasurementApp.Services;
-
-// Importing entity models which represent stored data structure
 using QuantityMeasurementAppModels.Entities;
-
-// Importing repository interface for abstraction of data storage
 using QuantityMeasurementAppRepositories.Interfaces;
-
-// Importing repository implementations (cache and database)
 using QuantityMeasurementAppRepositories.Repositories;
-
-// Importing utility classes like ApplicationConfig and ConnectionPool
 using QuantityMeasurementAppRepositories.Utilities;
-
-// Importing service interfaces
 using QuantityMeasurementAppServices.Interfaces;
 
-// Defining main namespace of the application
 namespace QuantityMeasurementApp
 {
-    // Main application class responsible for initializing and running the system
     public class QuantityMeasurementApp
     {
-        // Static instance variable for Singleton pattern (ensures only one instance exists)
         private static QuantityMeasurementApp instance;
-
-        // Lock object used for thread-safe Singleton initialization
         private static readonly object lockObject = new object();
 
-        // Controller that connects UI (menu) with business logic (service)
         private QuantityMeasurementController controller;
-
-        // Menu interface used for user interaction via console
         private IMenu menu;
-
-        // Repository interface used for storing and retrieving measurement data
-        private IExtremelyAdvancedQuantityMeasurementRepositoryHandlingAllDataPersistenceOperations repository;
-
-        // Stores the currently active repository type (Database or Cache)
+        private IQuantityMeasurementRepository repository;
         private string activeRepositoryType;
 
-        // Private constructor to enforce Singleton pattern (object cannot be created externally)
+        // Constructor
         private QuantityMeasurementApp()
         {
-            // Displaying application startup message
-            // This informs the user that the application initialization process has started
-            Console.WriteLine("=== Initializing Quantity Measurement Application on the system ===");
+            Console.WriteLine("[App] Starting Quantity Measurement Application...");
 
-            // Creating configuration object to read settings from appsettings.json file
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
-            // Fetching repository type configuration (either "database" or "cache")
-            string repoType = config.RetrieveRepositoryImplementationTypeFromConfiguration();
+            // Read repository type from appsettings.json
+            string repoType = config.GetRepositoryType();
+            Console.WriteLine("[App] Configured repository type: " + repoType);
 
-            // Displaying configured data source type for debugging and verification purposes
-            Console.WriteLine("Configured Data Source on the system: " + repoType);
-
-            // Checking if configuration specifies database usage
-            if (repoType.Equals("sql", StringComparison.OrdinalIgnoreCase) ||
-                repoType.Equals("database", StringComparison.OrdinalIgnoreCase))
+            if (repoType.Equals("database", StringComparison.OrdinalIgnoreCase))
             {
-                // Attempt to initialize database repository
-                // If database is not available, fallback will be handled automatically
+                // Try database first, fall back to cache if DB is offline
                 TryInitializeDatabaseRepository(config);
             }
             else
             {
-                // Informing user that cache repository will be used instead of database
-                // This ensures clarity about system behavior
-                Console.WriteLine("Using in-memory cache as the data source on the system (database skipped).");
-
-                // Initialize cache repository
+                Console.WriteLine("[App] Repository type is cache. Skipping database.");
                 InitializeCacheRepository();
             }
 
-            // Creating service layer and injecting repository dependency
-            // Service layer handles business logic operations
-            IQuantityMeasurementService service =
-                new QuantityMeasurementServiceImpl(repository);
+            IQuantityMeasurementService service = new QuantityMeasurementServiceImpl(repository);
 
-            // Creating controller and passing service layer
-            // Controller acts as mediator between UI and service
             controller = new QuantityMeasurementController(service);
-
-            // Creating menu UI and passing controller
-            // Menu will interact with user via console
             menu = new QuantityMenu(controller);
 
-            // Informing user that application setup is complete
-            Console.WriteLine("Application setup completed successfully on the system.");
-
-            // Displaying which repository is currently active
-            Console.WriteLine("Active Data Source on the system: " + activeRepositoryType);
-
-            // Adding empty line for better console readability
+            Console.WriteLine("[App] Initialization complete.");
+            Console.WriteLine("[App] Active repository: " + activeRepositoryType);
             Console.WriteLine("");
         }
 
-        // Method to initialize database repository with fallback mechanism
-        private void TryInitializeDatabaseRepository(ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config)
+        // Tries SQL Server based on config setting
+        // Falls back to cache automatically if SQL Server is unreachable
+        private void TryInitializeDatabaseRepository(ApplicationConfig config)
         {
-            // Informing user that system is attempting to connect to SQL Server
-            Console.WriteLine("Attempting to establish connection with SQL Server on the system...");
+            Console.WriteLine("[App] Attempting to connect to SQL Server...");
 
             try
             {
-                // Getting connection pool instance using configuration settings
-                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations pool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations.RetrieveSingletonInstanceOfConnectionPoolingManager(config);
-
-                // Creating database repository using connection pool
-                repository = new AdvancedSqlDataAccessManagerForHandlingMeasurementPersistenceOperations(pool);
-
-                // Setting active repository type
+                ConnectionPool pool = ConnectionPool.GetInstance(config);
+                repository = new QuantityMeasurementDatabaseRepository(pool);
                 activeRepositoryType = "Database (SQL Server)";
 
-                // Informing user that database connection was successful
-                Console.WriteLine("Connection successful. Using database-backed repository on the system.");
+                Console.WriteLine("[App] SQL Server connected. Using Database Repository.");
             }
             catch (Exception ex)
             {
-                // Printing blank line for better formatting
+                // SQL Server is offline or unreachable
+                // Automatically switch to cache 
+                Console.WriteLine("");
+                Console.WriteLine("[App] WARNING: SQL Server is not available.");
+                Console.WriteLine("[App] Reason : " + ex.Message);
+                Console.WriteLine("[App] Automatically switching to Cache Repository...");
                 Console.WriteLine("");
 
-                // Informing user that SQL Server is not reachable
-                Console.WriteLine("WARNING: Unable to connect to SQL Server.");
-
-                // Displaying actual error message for debugging purposes
-                Console.WriteLine("Details: " + ex.Message);
-
-                // Informing user that system will switch to fallback mode
-                Console.WriteLine("Switching to fallback mode from sql memory to (in-memory cache).");
-
-                // Adding spacing for readability
-                Console.WriteLine("");
-
-                // Initialize cache repository as fallback
                 InitializeCacheRepository();
             }
         }
 
-        // Method to initialize cache repository
+        // Initializes the in-memory cache repository with JSON file backup
         private void InitializeCacheRepository()
         {
-            // Getting singleton instance of cache repository
-            repository = AdvancedLocalJsonStorageManagerForMeasurementRecords.CreateOrRetrieveStorageManagerInstance();
-
-            // Setting repository type description
-            activeRepositoryType =
-                "Cache (offline mode - data stored in JSON file instead of cache Repository)";
-
-            // Informing user that cache repository is ready
-            Console.WriteLine("Cache repository initialized successfully on the System.");
+            repository = QuantityMeasurementCacheRepository.GetInstance();
+            activeRepositoryType = "Cache (SQL Server offline - data saved to JSON file)";
+            Console.WriteLine("[App] Cache Repository ready.");
         }
 
-        // Singleton method to get application instance
+        // Singleton
         public static QuantityMeasurementApp GetInstance()
         {
-            // Check if instance is not created yet
             if (instance == null)
             {
-                // Locking to ensure thread safety
                 lock (lockObject)
                 {
-                    // Double-check to prevent duplicate creation
                     if (instance == null)
                     {
                         instance = new QuantityMeasurementApp();
                     }
                 }
             }
-
-            // Returning the single instance of application
             return instance;
         }
 
-        // Method to start application
-        public void StartTheEntireQuantityMeasurementApplicationExecutionProcess()
+        // Start the application
+        public void Start()
         {
-            // Informing user that application is starting main menu
-            Console.WriteLine("Launching application menu of QuantityApp...");
-
-            // Running menu loop (user interaction begins here)
             menu.Run();
         }
 
-        // Method to display all stored measurement records
-        public void GenerateAndDisplayCompleteMeasurementOperationsReportToUser()
+        // Prints all stored measurements after the menu exits
+        public void ReportAllMeasurements()
         {
-            // Printing header section
-            Console.WriteLine("\n========== Measurement History Of Quantity App ==========");
+            Console.WriteLine("\n========== Measurement History ==========");
+            Console.WriteLine("Repository : " + activeRepositoryType);
 
-            // Displaying active repository type
-            Console.WriteLine("Data Source on the system: " + activeRepositoryType);
+            List<QuantityMeasurementEntity> all = repository.GetAll();
 
-            // Fetching all records from repository
-            List<ComprehensiveMeasurementOperationDataRecord> all = repository.RetrieveAllStoredQuantityMeasurementEntitiesFromDataStorage();
+            Console.WriteLine("Total records: " + all.Count);
 
-            // Displaying total number of records
-            Console.WriteLine("Total Records Found on the system: " + all.Count);
-
-            // Iterating through all records and printing each one
             for (int i = 0; i < all.Count; i++)
             {
                 Console.WriteLine((i + 1) + ". " + all[i].ToString());
             }
 
-            // Separator for readability
             Console.WriteLine("-----------------------------------------");
-
-            // Displaying pool or cache statistics
-            Console.WriteLine("Resource Info: " + repository.RetrieveDetailedStatisticsInformationAboutRepositoryResourceUsageAndStorageState());
-
-            // Closing section
+            Console.WriteLine("Pool stats : " + repository.GetPoolStatistics());
             Console.WriteLine("=========================================\n");
         }
 
-        // Method to delete all measurement records
+        // Deletes all records
         public void DeleteAllMeasurements()
         {
-            // Informing user that deletion process has started
-            Console.WriteLine("Clearing all stored measurement records from the system...");
-
-            // Deleting all records from repository
-            repository.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
-
-            // Displaying updated record count
-            Console.WriteLine("Operation completed. Remaining records on the system: " + repository.RetrieveTotalCountOfAllStoredMeasurementEntitiesFromDataStorage());
+            Console.WriteLine("[App] Deleting all measurements...");
+            repository.DeleteAll();
+            Console.WriteLine("[App] Done. Count now: " + repository.GetTotalCount());
         }
 
-        // Method to release resources (mainly database connections)
-        public void ReleaseAndCleanupAllApplicationResourcesBeforeShutdown()
+        // Releases DB connections on shutdown
+        public void CloseResources()
         {
-            // Informing user that resource cleanup is starting
-            Console.WriteLine("Releasing system resources of the system...");
-
-            // Calling repository to release resources
-            repository.ReleaseAndCleanupAllResourcesUsedByRepositoryImplementation();
-
-            // Confirming resource cleanup completion
-            Console.WriteLine("All resources have been successfully released from the system.");
+            Console.WriteLine("[App] Closing resources...");
+            repository.ReleaseResources();
+            Console.WriteLine("[App] Resources closed.");
         }
     }
 }

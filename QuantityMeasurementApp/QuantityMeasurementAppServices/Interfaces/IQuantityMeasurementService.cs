@@ -1,30 +1,27 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
 using QuantityMeasurementAppModels.DTOs;
 
 namespace QuantityMeasurementAppServices.Interfaces
 {
     public interface IQuantityMeasurementService
     {
-        UniversalMeasurementDataCarrierObject PerformAdditionOperationBetweenTwoQuantityObjectsAndReturnResult(
-            UniversalMeasurementDataCarrierObject firstQuantityInputObjectForAddition,
-            UniversalMeasurementDataCarrierObject secondQuantityInputObjectForAddition,
-            string targetUnitForAdditionOperation);
+        //Method for Addition
+        QuantityDTO Add(QuantityDTO first, QuantityDTO second, string targetUnit);
 
-        UniversalMeasurementDataCarrierObject PerformSubtractionOperationBetweenTwoQuantityObjectsAndReturnResult(
-            UniversalMeasurementDataCarrierObject firstQuantityInputObjectForSubtraction,
-            UniversalMeasurementDataCarrierObject secondQuantityInputObjectForSubtraction,
-            string targetUnitForSubtractionOperation);
+        //Method for Subtraction
+        QuantityDTO Subtract(QuantityDTO first, QuantityDTO second, string targetUnit);
 
-        double PerformDivisionOperationBetweenTwoQuantityObjectsAndReturnNumericResult(
-            UniversalMeasurementDataCarrierObject firstQuantityInputObjectForDivision,
-            UniversalMeasurementDataCarrierObject secondQuantityInputObjectForDivision);
+        //Method for Division
+        double Divide(QuantityDTO first, QuantityDTO second);
 
-        bool PerformComparisonOperationBetweenTwoQuantityObjectsAndReturnBooleanResult(
-            UniversalMeasurementDataCarrierObject firstQuantityInputObjectForComparison,
-            UniversalMeasurementDataCarrierObject secondQuantityInputObjectForComparison);
+        //Method for Comparison
+        bool Compare(QuantityDTO first, QuantityDTO second);
 
-        UniversalMeasurementDataCarrierObject PerformConversionOperationBetweenUnitsAndReturnConvertedQuantity(
-            UniversalMeasurementDataCarrierObject inputQuantityObjectForConversion,
-            string targetUnitForConversionOperation);
+        //Method for Convert
+        QuantityDTO Convert(QuantityDTO quantity, string targetUnit);
     }
 }

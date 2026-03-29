@@ -1,9 +1,7 @@
 using System;
-using QuantityMeasurementAppRepositories.Interfaces;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using System.Linq;
 using Microsoft.Data.SqlClient;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QuantityMeasurementApp.Services;
@@ -20,7 +18,7 @@ namespace QuantityMeasurementApp.Tests
     public class QuantityMeasurementDBTests
     {
         // -------------------------------------------------------
-        // ApplicationConfig Tests For QuantityApp
+        // ApplicationConfig Tests
         // -------------------------------------------------------
 
         //Test ApplicationConfig loads connection string from appsettings.json
@@ -28,15 +26,14 @@ namespace QuantityMeasurementApp.Tests
         public void TestDatabaseConfiguration_LoadedFromProperties()
         {
             //create config instance
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             //get connection string
-            string connectionString = config.RetrieveDatabaseConnectionStringFromConfiguration();
+            string connectionString = config.GetConnectionString();
 
             //verify connection string is not null or empty
             Assert.IsNotNull(connectionString);
             Assert.AreNotEqual("", connectionString);
-            
         }
 
         //Test ApplicationConfig loads pool size from appsettings.json
@@ -44,10 +41,10 @@ namespace QuantityMeasurementApp.Tests
         public void TestDatabaseConfiguration_PoolSizeLoaded()
         {
             //create config instance
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             //get pool size
-            int poolSize = config.RetrieveMaximumDatabaseConnectionPoolSizeFromConfiguration();
+            int poolSize = config.GetMaxPoolSize();
 
             //verify pool size is greater than zero
             Assert.IsTrue(poolSize > 0);
@@ -62,16 +59,16 @@ namespace QuantityMeasurementApp.Tests
             File.WriteAllText(tempPath, "{ \"Logging\": { \"LogLevel\": \"Information\" } }");
 
             //create config from temp file
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings(tempPath);
+            ApplicationConfig config = new ApplicationConfig(tempPath);
 
             //verify default pool size returned
-            Assert.AreEqual(5, config.RetrieveMaximumDatabaseConnectionPoolSizeFromConfiguration());
+            Assert.AreEqual(5, config.GetMaxPoolSize());
 
             //verify default timeout returned
-            Assert.AreEqual(30, config.RetrieveDatabaseConnectionTimeoutDurationFromConfiguration());
+            Assert.AreEqual(30, config.GetConnectionTimeout());
 
             //verify default repo type is cache
-            Assert.AreEqual("cache",config.RetrieveRepositoryImplementationTypeFromConfiguration());
+            Assert.AreEqual("cache", config.GetRepositoryType());
 
             //cleanup temp file
             File.Delete(tempPath);
@@ -82,10 +79,10 @@ namespace QuantityMeasurementApp.Tests
         public void TestDatabaseConfiguration_RepositoryTypeLoaded()
         {
             //create config instance
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             //get repository type
-            string repoType = config.RetrieveRepositoryImplementationTypeFromConfiguration();
+            string repoType = config.GetRepositoryType();
 
             //verify repository type is database or cache
             bool isValid = repoType.Equals("database", StringComparison.OrdinalIgnoreCase)
@@ -103,16 +100,15 @@ namespace QuantityMeasurementApp.Tests
         public void TestConnectionPool_Initialization()
         {
             //create config instance
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             try
             {
                 //get pool instance
-                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations pool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations.RetrieveSingletonInstanceOfConnectionPoolingManager(config);
+                ConnectionPool pool = ConnectionPool.GetInstance(config);
 
                 //get pool statistics
-                string stats = pool.RetrieveDetailedStatisticsInformationAboutRepositoryResourceUsageAndStorageState();
-
+                string stats = pool.GetPoolStatistics();
 
                 //verify statistics are not null or empty
                 Assert.IsNotNull(stats);
@@ -123,7 +119,7 @@ namespace QuantityMeasurementApp.Tests
             catch (Exception ex)
             {
                 //mark as inconclusive if database is not available
-                Assert.Fail("Database error: " + ex.Message);
+                Assert.Inconclusive("Database not available: " + ex.Message);
             }
         }
 
@@ -132,12 +128,12 @@ namespace QuantityMeasurementApp.Tests
         public void TestConnectionPool_Acquire_Release()
         {
             //create config instance
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             try
             {
                 //get pool instance
-                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations pool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations.RetrieveSingletonInstanceOfConnectionPoolingManager(config);
+                ConnectionPool pool = ConnectionPool.GetInstance(config);
 
                 //acquire a connection from the pool
                 SqlConnection conn = pool.GetConnection();
@@ -150,13 +146,13 @@ namespace QuantityMeasurementApp.Tests
                 pool.ReturnConnection(conn);
 
                 //verify pool statistics still available after return
-                string stats = pool.RetrieveDetailedStatisticsInformationAboutRepositoryResourceUsageAndStorageState();
+                string stats = pool.GetPoolStatistics();
                 Assert.IsNotNull(stats);
             }
             catch (Exception ex)
             {
                 //mark as inconclusive if database is not available
-                Assert.Fail("Database error: " + ex.Message);
+                Assert.Inconclusive("Database not available: " + ex.Message);
             }
         }
 
@@ -165,17 +161,17 @@ namespace QuantityMeasurementApp.Tests
         public void TestDatabaseRepositoryPoolStatistics()
         {
             //create config instance
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             try
             {
                 //create pool and repository
-                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations pool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations.RetrieveSingletonInstanceOfConnectionPoolingManager(config);
-                IExtremelyAdvancedQuantityMeasurementRepositoryHandlingAllDataPersistenceOperations repo =
-                    new AdvancedSqlDataAccessManagerForHandlingMeasurementPersistenceOperations(pool);
+                ConnectionPool pool = ConnectionPool.GetInstance(config);
+                QuantityMeasurementDatabaseRepository repo =
+                    new QuantityMeasurementDatabaseRepository(pool);
 
                 //get pool statistics from repository
-                string stats = pool.RetrieveDetailedStatisticsInformationAboutRepositoryResourceUsageAndStorageState();
+                string stats = repo.GetPoolStatistics();
 
                 //verify statistics contain required fields
                 Assert.IsNotNull(stats);
@@ -186,7 +182,7 @@ namespace QuantityMeasurementApp.Tests
             catch (Exception ex)
             {
                 //mark as inconclusive if database is not available
-                Assert.Fail("Database error: " + ex.Message);
+                Assert.Inconclusive("Database not available: " + ex.Message);
             }
         }
 
@@ -199,33 +195,33 @@ namespace QuantityMeasurementApp.Tests
         public void TestDatabaseRepository_SaveEntity()
         {
             //create config and pool
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             try
             {
                 //create repository
-                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations pool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations.RetrieveSingletonInstanceOfConnectionPoolingManager(config);
-                IExtremelyAdvancedQuantityMeasurementRepositoryHandlingAllDataPersistenceOperations repo =
-                    new AdvancedSqlDataAccessManagerForHandlingMeasurementPersistenceOperations(pool);
+                ConnectionPool pool = ConnectionPool.GetInstance(config);
+                QuantityMeasurementDatabaseRepository repo =
+                    new QuantityMeasurementDatabaseRepository(pool);
 
                 //clear existing data before test
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
 
                 //create and save entity
-                ComprehensiveMeasurementOperationDataRecord entity = new ComprehensiveMeasurementOperationDataRecord(
-                    "Compare", 1.0, "IMPERIAL_FOOT_BASED_UNIT", 1.0, "IMPERIAL_FOOT_BASED_UNIT", 1.0, "Length");
-                repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(entity);
+                QuantityMeasurementEntity entity = new QuantityMeasurementEntity(
+                    "Compare", 1.0, "Feet", 1.0, "Feet", 1.0, "Length");
+                repo.Save(entity);
 
                 //verify count increased to 1
-                Assert.AreEqual(1, repo.RetrieveTotalCountOfAllStoredMeasurementEntitiesFromDataStorage());
+                Assert.AreEqual(1, repo.GetTotalCount());
 
                 //cleanup
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
             }
             catch (Exception ex)
             {
                 //mark as inconclusive if database is not available
-                Assert.Fail("Database error: " + ex.Message);
+                Assert.Inconclusive("Database not available: " + ex.Message);
             }
         }
 
@@ -234,39 +230,39 @@ namespace QuantityMeasurementApp.Tests
         public void TestDatabaseRepository_RetrieveAllMeasurements()
         {
             //create config and pool
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             try
             {
                 //create repository
-                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations pool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations.RetrieveSingletonInstanceOfConnectionPoolingManager(config);
-                IExtremelyAdvancedQuantityMeasurementRepositoryHandlingAllDataPersistenceOperations repo =
-                    new AdvancedSqlDataAccessManagerForHandlingMeasurementPersistenceOperations(pool);
+                ConnectionPool pool = ConnectionPool.GetInstance(config);
+                QuantityMeasurementDatabaseRepository repo =
+                    new QuantityMeasurementDatabaseRepository(pool);
 
                 //clear existing data before test
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
 
                 //save three entities with different operations and types
-                repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(new ComprehensiveMeasurementOperationDataRecord(
-                    "Compare", 1.0, "IMPERIAL_FOOT_BASED_UNIT", 1.0, "IMPERIAL_FOOT_BASED_UNIT", 1.0, "Length"));
-                repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(new ComprehensiveMeasurementOperationDataRecord(
+                repo.Save(new QuantityMeasurementEntity(
+                    "Compare", 1.0, "Feet", 1.0, "Feet", 1.0, "Length"));
+                repo.Save(new QuantityMeasurementEntity(
                     "Add", 1.0, "Kilogram", 2.0, "Kilogram", 3.0, "Weight"));
-                repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(new ComprehensiveMeasurementOperationDataRecord(
+                repo.Save(new QuantityMeasurementEntity(
                     "Convert", 1.0, "Litre", 1000.0, "Volume"));
 
                 //retrieve all measurements
-                List<ComprehensiveMeasurementOperationDataRecord> all = repo.RetrieveAllStoredQuantityMeasurementEntitiesFromDataStorage();
+                List<QuantityMeasurementEntity> all = repo.GetAll();
 
                 //verify correct number returned
                 Assert.AreEqual(3, all.Count);
 
                 //cleanup
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
             }
             catch (Exception ex)
             {
                 //mark as inconclusive if database is not available
-                Assert.Fail("Database error: " + ex.Message);
+                Assert.Inconclusive("Database not available: " + ex.Message);
             }
         }
 
@@ -275,40 +271,40 @@ namespace QuantityMeasurementApp.Tests
         public void TestDatabaseRepository_QueryByOperation()
         {
             //create config and pool
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             try
             {
                 //create repository
-                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations pool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations.RetrieveSingletonInstanceOfConnectionPoolingManager(config);
-                IExtremelyAdvancedQuantityMeasurementRepositoryHandlingAllDataPersistenceOperations repo =
-                    new AdvancedSqlDataAccessManagerForHandlingMeasurementPersistenceOperations(pool);
+                ConnectionPool pool = ConnectionPool.GetInstance(config);
+                QuantityMeasurementDatabaseRepository repo =
+                    new QuantityMeasurementDatabaseRepository(pool);
 
                 //clear existing data before test
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
 
                 //save entities with different operations
-                repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(new ComprehensiveMeasurementOperationDataRecord(
-                    "Compare", 1.0, "IMPERIAL_FOOT_BASED_UNIT", 1.0, "IMPERIAL_FOOT_BASED_UNIT", 1.0, "Length"));
-                repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(new ComprehensiveMeasurementOperationDataRecord(
+                repo.Save(new QuantityMeasurementEntity(
+                    "Compare", 1.0, "Feet", 1.0, "Feet", 1.0, "Length"));
+                repo.Save(new QuantityMeasurementEntity(
                     "Compare", 2.0, "Kilogram", 2.0, "Kilogram", 1.0, "Weight"));
-                repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(new ComprehensiveMeasurementOperationDataRecord(
+                repo.Save(new QuantityMeasurementEntity(
                     "Add", 1.0, "Litre", 2.0, "Litre", 3.0, "Volume"));
 
                 //query only Compare operations
-                List<ComprehensiveMeasurementOperationDataRecord> results =
-                    repo.RetrieveMeasurementEntitiesFilteredByOperationType("Compare");
+                List<QuantityMeasurementEntity> results =
+                    repo.GetByOperation("Compare");
 
                 //verify only 2 Compare records returned
                 Assert.AreEqual(2, results.Count);
 
                 //cleanup
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
             }
             catch (Exception ex)
             {
                 //mark as inconclusive if database is not available
-                Assert.Fail("Database error: " + ex.Message);
+                Assert.Inconclusive("Database not available: " + ex.Message);
             }
         }
 
@@ -317,40 +313,40 @@ namespace QuantityMeasurementApp.Tests
         public void TestDatabaseRepository_QueryByMeasurementType()
         {
             //create config and pool
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             try
             {
                 //create repository
-                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations pool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations.RetrieveSingletonInstanceOfConnectionPoolingManager(config);
-                IExtremelyAdvancedQuantityMeasurementRepositoryHandlingAllDataPersistenceOperations repo =
-                    new AdvancedSqlDataAccessManagerForHandlingMeasurementPersistenceOperations(pool);
+                ConnectionPool pool = ConnectionPool.GetInstance(config);
+                QuantityMeasurementDatabaseRepository repo =
+                    new QuantityMeasurementDatabaseRepository(pool);
 
                 //clear existing data before test
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
 
                 //save entities with different measurement types
-                repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(new ComprehensiveMeasurementOperationDataRecord(
-                    "Compare", 1.0, "IMPERIAL_FOOT_BASED_UNIT", 1.0, "IMPERIAL_FOOT_BASED_UNIT", 1.0, "Length"));
-                repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(new ComprehensiveMeasurementOperationDataRecord(
-                    "Compare", 1.0, "IMPERIAL_FOOT_BASED_UNIT", 2.0, "IMPERIAL_FOOT_BASED_UNIT", 0.0, "Length"));
-                repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(new ComprehensiveMeasurementOperationDataRecord(
+                repo.Save(new QuantityMeasurementEntity(
+                    "Compare", 1.0, "Feet", 1.0, "Feet", 1.0, "Length"));
+                repo.Save(new QuantityMeasurementEntity(
+                    "Compare", 1.0, "Feet", 2.0, "Feet", 0.0, "Length"));
+                repo.Save(new QuantityMeasurementEntity(
                     "Add", 1.0, "Kilogram", 2.0, "Kilogram", 3.0, "Weight"));
 
                 //query only Length measurements
-                List<ComprehensiveMeasurementOperationDataRecord> results =
-                    repo.RetrieveMeasurementEntitiesFilteredByMeasurementCategoryType("Length");
+                List<QuantityMeasurementEntity> results =
+                    repo.GetByMeasurementType("Length");
 
                 //verify only 2 Length records returned
                 Assert.AreEqual(2, results.Count);
 
                 //cleanup
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
             }
             catch (Exception ex)
             {
                 //mark as inconclusive if database is not available
-                Assert.Fail("Database error: " + ex.Message);
+                Assert.Inconclusive("Database not available: " + ex.Message);
             }
         }
 
@@ -359,36 +355,36 @@ namespace QuantityMeasurementApp.Tests
         public void TestDatabaseRepository_CountMeasurements()
         {
             //create config and pool
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             try
             {
                 //create repository
-                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations pool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations.RetrieveSingletonInstanceOfConnectionPoolingManager(config);
-                IExtremelyAdvancedQuantityMeasurementRepositoryHandlingAllDataPersistenceOperations repo =
-                    new AdvancedSqlDataAccessManagerForHandlingMeasurementPersistenceOperations(pool);
+                ConnectionPool pool = ConnectionPool.GetInstance(config);
+                QuantityMeasurementDatabaseRepository repo =
+                    new QuantityMeasurementDatabaseRepository(pool);
 
                 //clear existing data before test
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
 
                 //save three entities
-                repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(new ComprehensiveMeasurementOperationDataRecord(
-                    "Compare", 1.0, "IMPERIAL_FOOT_BASED_UNIT", 1.0, "IMPERIAL_FOOT_BASED_UNIT", 1.0, "Length"));
-                repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(new ComprehensiveMeasurementOperationDataRecord(
+                repo.Save(new QuantityMeasurementEntity(
+                    "Compare", 1.0, "Feet", 1.0, "Feet", 1.0, "Length"));
+                repo.Save(new QuantityMeasurementEntity(
                     "Add", 1.0, "Kilogram", 2.0, "Kilogram", 3.0, "Weight"));
-                repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(new ComprehensiveMeasurementOperationDataRecord(
+                repo.Save(new QuantityMeasurementEntity(
                     "Convert", 1.0, "Litre", 1000.0, "Volume"));
 
                 //verify count matches exactly 3
-                Assert.AreEqual(3, repo.RetrieveTotalCountOfAllStoredMeasurementEntitiesFromDataStorage());
+                Assert.AreEqual(3, repo.GetTotalCount());
 
                 //cleanup
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
             }
             catch (Exception ex)
             {
                 //mark as inconclusive if database is not available
-                Assert.Fail("Database error: " + ex.Message);
+                Assert.Inconclusive("Database not available: " + ex.Message);
             }
         }
 
@@ -397,34 +393,34 @@ namespace QuantityMeasurementApp.Tests
         public void TestDatabaseRepository_DeleteAll()
         {
             //create config and pool
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             try
             {
                 //create repository
-                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations pool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations.RetrieveSingletonInstanceOfConnectionPoolingManager(config);
-                IExtremelyAdvancedQuantityMeasurementRepositoryHandlingAllDataPersistenceOperations repo =
-                    new AdvancedSqlDataAccessManagerForHandlingMeasurementPersistenceOperations(pool);
+                ConnectionPool pool = ConnectionPool.GetInstance(config);
+                QuantityMeasurementDatabaseRepository repo =
+                    new QuantityMeasurementDatabaseRepository(pool);
 
                 //clear first to start clean
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
 
                 //save some entities
-                repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(new ComprehensiveMeasurementOperationDataRecord(
-                    "Compare", 1.0, "IMPERIAL_FOOT_BASED_UNIT", 1.0, "IMPERIAL_FOOT_BASED_UNIT", 1.0, "Length"));
-                repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(new ComprehensiveMeasurementOperationDataRecord(
+                repo.Save(new QuantityMeasurementEntity(
+                    "Compare", 1.0, "Feet", 1.0, "Feet", 1.0, "Length"));
+                repo.Save(new QuantityMeasurementEntity(
                     "Add", 1.0, "Kilogram", 2.0, "Kilogram", 3.0, "Weight"));
 
                 //delete all records
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
 
                 //verify count is zero
-                Assert.AreEqual(0, repo.RetrieveTotalCountOfAllStoredMeasurementEntitiesFromDataStorage());
+                Assert.AreEqual(0, repo.GetTotalCount());
             }
             catch (Exception ex)
             {
                 //mark as inconclusive if database is not available
-                Assert.Fail("Database error: " + ex.Message);
+                Assert.Inconclusive("Database not available: " + ex.Message);
             }
         }
 
@@ -437,43 +433,43 @@ namespace QuantityMeasurementApp.Tests
         public void TestSQLInjectionPrevention()
         {
             //create config and pool
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             try
             {
                 //create repository
-                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations pool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations.RetrieveSingletonInstanceOfConnectionPoolingManager(config);
-                IExtremelyAdvancedQuantityMeasurementRepositoryHandlingAllDataPersistenceOperations repo =
-                    new AdvancedSqlDataAccessManagerForHandlingMeasurementPersistenceOperations(pool);
+                ConnectionPool pool = ConnectionPool.GetInstance(config);
+                QuantityMeasurementDatabaseRepository repo =
+                    new QuantityMeasurementDatabaseRepository(pool);
 
                 //clear existing data before test
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
 
                 //save one normal entity
-                repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(new ComprehensiveMeasurementOperationDataRecord(
-                    "Compare", 1.0, "IMPERIAL_FOOT_BASED_UNIT", 1.0, "IMPERIAL_FOOT_BASED_UNIT", 1.0, "Length"));
+                repo.Save(new QuantityMeasurementEntity(
+                    "Compare", 1.0, "Feet", 1.0, "Feet", 1.0, "Length"));
 
                 //attempt SQL injection in query parameter
                 string injectionAttempt =
                     "Compare'; DROP TABLE quantity_measurements; --";
 
                 //query with injection string - should return no results
-                List<ComprehensiveMeasurementOperationDataRecord> results =
-                    repo.RetrieveMeasurementEntitiesFilteredByOperationType(injectionAttempt);
+                List<QuantityMeasurementEntity> results =
+                    repo.GetByOperation(injectionAttempt);
 
                 //verify injection treated as literal value - no results found
                 Assert.AreEqual(0, results.Count);
 
                 //verify original data still exists - table was not dropped
-                Assert.AreEqual(1, repo.RetrieveTotalCountOfAllStoredMeasurementEntitiesFromDataStorage());
+                Assert.AreEqual(1, repo.GetTotalCount());
 
                 //cleanup
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
             }
             catch (Exception ex)
             {
                 //mark as inconclusive if database is not available
-                Assert.Fail("Database error: " + ex.Message);
+                Assert.Inconclusive("Database not available: " + ex.Message);
             }
         }
 
@@ -496,13 +492,12 @@ namespace QuantityMeasurementApp.Tests
                 "\"Repository\": { \"Type\": \"database\" } }");
 
             //create config from bad temp file
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings badConfig = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings(tempPath);
+            ApplicationConfig badConfig = new ApplicationConfig(tempPath);
 
             try
             {
                 //attempt connection with bad config - should throw exception
-                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations badPool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations
-    .RetrieveSingletonInstanceOfConnectionPoolingManager(badConfig);
+                ConnectionPool badPool = ConnectionPool.GetInstance(badConfig);
                 Assert.Fail("Expected exception was not thrown");
             }
             catch (Exception ex)
@@ -527,12 +522,12 @@ namespace QuantityMeasurementApp.Tests
         public void TestRepositoryFactory_CreateCacheRepository()
         {
             //create cache repository instance
-            AdvancedLocalJsonStorageManagerForMeasurementRecords repo =
-                AdvancedLocalJsonStorageManagerForMeasurementRecords.CreateOrRetrieveStorageManagerInstance();
+            QuantityMeasurementCacheRepository repo =
+                QuantityMeasurementCacheRepository.GetInstance();
 
             //verify correct type returned
             Assert.IsInstanceOfType(repo,
-                typeof(AdvancedLocalJsonStorageManagerForMeasurementRecords));
+                typeof(QuantityMeasurementCacheRepository));
         }
 
         //Test database repository is created correctly
@@ -540,23 +535,23 @@ namespace QuantityMeasurementApp.Tests
         public void TestRepositoryFactory_CreateDatabaseRepository()
         {
             //create config and pool
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             try
             {
                 //create database repository
-                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations pool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations.RetrieveSingletonInstanceOfConnectionPoolingManager(config);
-                IExtremelyAdvancedQuantityMeasurementRepositoryHandlingAllDataPersistenceOperations repo =
-                    new AdvancedSqlDataAccessManagerForHandlingMeasurementPersistenceOperations(pool);
+                ConnectionPool pool = ConnectionPool.GetInstance(config);
+                QuantityMeasurementDatabaseRepository repo =
+                    new QuantityMeasurementDatabaseRepository(pool);
 
                 //verify correct type returned
                 Assert.IsInstanceOfType(repo,
-                    typeof(AdvancedSqlDataAccessManagerForHandlingMeasurementPersistenceOperations));
+                    typeof(QuantityMeasurementDatabaseRepository));
             }
             catch (Exception ex)
             {
                 //mark as inconclusive if database is not available
-                Assert.Fail("Database error: " + ex.Message);
+                Assert.Inconclusive("Database not available: " + ex.Message);
             }
         }
 
@@ -569,40 +564,40 @@ namespace QuantityMeasurementApp.Tests
         public void TestServiceWithDatabaseRepository_Integration()
         {
             //create config and pool
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             try
             {
                 //create repository and service
-                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations pool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations.RetrieveSingletonInstanceOfConnectionPoolingManager(config);
-                IExtremelyAdvancedQuantityMeasurementRepositoryHandlingAllDataPersistenceOperations repo =
-                    new AdvancedSqlDataAccessManagerForHandlingMeasurementPersistenceOperations(pool);
+                ConnectionPool pool = ConnectionPool.GetInstance(config);
+                QuantityMeasurementDatabaseRepository repo =
+                    new QuantityMeasurementDatabaseRepository(pool);
 
                 //clear existing data before test
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
 
                 //create service with database repository
                 QuantityMeasurementServiceImpl service =
                     new QuantityMeasurementServiceImpl(repo);
 
                 //perform compare operation
-                UniversalMeasurementDataCarrierObject first = new UniversalMeasurementDataCarrierObject(1.0, "IMPERIAL_FOOT_BASED_UNIT", "Length");
-                UniversalMeasurementDataCarrierObject second = new UniversalMeasurementDataCarrierObject(1.0, "IMPERIAL_FOOT_BASED_UNIT", "Length");
-                bool result = service.PerformComparisonOperationBetweenTwoQuantityObjectsAndReturnBooleanResult(first, second);
+                QuantityDTO first = new QuantityDTO(1.0, "Feet", "Length");
+                QuantityDTO second = new QuantityDTO(1.0, "Feet", "Length");
+                bool result = service.Compare(first, second);
 
                 //verify result is correct
                 Assert.IsTrue(result);
 
                 //verify data was persisted to database
-                Assert.AreEqual(1, repo.RetrieveTotalCountOfAllStoredMeasurementEntitiesFromDataStorage());
+                Assert.AreEqual(1, repo.GetTotalCount());
 
                 //cleanup
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
             }
             catch (Exception ex)
             {
                 //mark as inconclusive if database is not available
-                Assert.Fail("Database error: " + ex.Message);
+                Assert.Inconclusive("Database not available: " + ex.Message);
             }
         }
 
@@ -613,27 +608,27 @@ namespace QuantityMeasurementApp.Tests
         public void TestServiceWithCacheRepository_Integration()
         {
             //get cache repository and clear all data before starting
-            AdvancedLocalJsonStorageManagerForMeasurementRecords repo =
-                AdvancedLocalJsonStorageManagerForMeasurementRecords.CreateOrRetrieveStorageManagerInstance();
-            repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+            QuantityMeasurementCacheRepository repo =
+                QuantityMeasurementCacheRepository.GetInstance();
+            repo.DeleteAll();
 
             //create service with cache repository
             QuantityMeasurementServiceImpl service =
                 new QuantityMeasurementServiceImpl(repo);
 
             //perform compare operation
-            UniversalMeasurementDataCarrierObject first = new UniversalMeasurementDataCarrierObject(1.0, "IMPERIAL_FOOT_BASED_UNIT", "Length");
-            UniversalMeasurementDataCarrierObject second = new UniversalMeasurementDataCarrierObject(1.0, "IMPERIAL_FOOT_BASED_UNIT", "Length");
-            bool result = service.PerformComparisonOperationBetweenTwoQuantityObjectsAndReturnBooleanResult(first, second);
+            QuantityDTO first = new QuantityDTO(1.0, "Feet", "Length");
+            QuantityDTO second = new QuantityDTO(1.0, "Feet", "Length");
+            bool result = service.Compare(first, second);
 
             //verify result is correct
             Assert.IsTrue(result);
 
             //verify exactly 1 record is in cache
-            Assert.AreEqual(1, repo.RetrieveTotalCountOfAllStoredMeasurementEntitiesFromDataStorage());
+            Assert.AreEqual(1, repo.GetTotalCount());
 
             //cleanup
-            repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+            repo.DeleteAll();
         }
 
         // -------------------------------------------------------
@@ -645,35 +640,34 @@ namespace QuantityMeasurementApp.Tests
         public void TestResourceCleanup_ConnectionReleasedToPool()
         {
             //create config and pool
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             try
             {
                 //create repository
-                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations pool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations.RetrieveSingletonInstanceOfConnectionPoolingManager(config);
-                IExtremelyAdvancedQuantityMeasurementRepositoryHandlingAllDataPersistenceOperations repo =
-                    new AdvancedSqlDataAccessManagerForHandlingMeasurementPersistenceOperations(pool);
+                ConnectionPool pool = ConnectionPool.GetInstance(config);
+                QuantityMeasurementDatabaseRepository repo =
+                    new QuantityMeasurementDatabaseRepository(pool);
 
                 //get stats before operation
-                string statsBefore = repo.RetrieveDetailedStatisticsInformationAboutRepositoryResourceUsageAndStorageState();
-
+                string statsBefore = pool.GetPoolStatistics();
 
                 //perform a save operation
-                repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(new ComprehensiveMeasurementOperationDataRecord("Compare", 1.0, "IMPERIAL_FOOT_BASED_UNIT", 1.0, "IMPERIAL_FOOT_BASED_UNIT", 1.0, "Length"));
+                repo.Save(new QuantityMeasurementEntity("Compare", 1.0, "Feet", 1.0, "Feet", 1.0, "Length"));
 
                 //get stats after operation
-                string statsAfter = repo.RetrieveDetailedStatisticsInformationAboutRepositoryResourceUsageAndStorageState();
+                string statsAfter = pool.GetPoolStatistics();
 
                 //verify pool stats are same - connection was returned to pool
                 Assert.AreEqual(statsBefore, statsAfter);
 
                 //cleanup
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
             }
             catch (Exception ex)
             {
                 //mark as inconclusive if database is not available
-                Assert.Fail("Database error: " + ex.Message);
+                Assert.Inconclusive("Database not available: " + ex.Message);
             }
         }
 
@@ -682,23 +676,23 @@ namespace QuantityMeasurementApp.Tests
         public void TestResourceCleanup_ReleaseResources()
         {
             //create config and pool
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             try
             {
                 //create repository
-                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations pool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations.RetrieveSingletonInstanceOfConnectionPoolingManager(config);
-                IExtremelyAdvancedQuantityMeasurementRepositoryHandlingAllDataPersistenceOperations repo = new AdvancedSqlDataAccessManagerForHandlingMeasurementPersistenceOperations(pool);
+                ConnectionPool pool = ConnectionPool.GetInstance(config);
+                QuantityMeasurementDatabaseRepository repo = new QuantityMeasurementDatabaseRepository(pool);
 
                 //release resources - should not throw any exception
-                repo.ReleaseAndCleanupAllResourcesUsedByRepositoryImplementation();
+                repo.ReleaseResources();
 
                 Assert.IsTrue(true);
             }
             catch (Exception ex)
             {
                 //mark as inconclusive if database is not available
-                Assert.Fail("Database error: " + ex.Message);
+                Assert.Inconclusive("Database not available: " + ex.Message);
             }
         }
 
@@ -713,8 +707,8 @@ namespace QuantityMeasurementApp.Tests
         public void TestCacheRepository_ConcurrentAccess()
         {
             //get cache repository and clear all data before starting
-            AdvancedLocalJsonStorageManagerForMeasurementRecords repo = AdvancedLocalJsonStorageManagerForMeasurementRecords.CreateOrRetrieveStorageManagerInstance();
-            repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+            QuantityMeasurementCacheRepository repo = QuantityMeasurementCacheRepository.GetInstance();
+            repo.DeleteAll();
 
             //create 5 threads each saving 10 records
             int threadCount = 5;
@@ -728,8 +722,8 @@ namespace QuantityMeasurementApp.Tests
                 {
                     for (int j = 0; j < savesPerThread; j++)
                     {
-                        repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(new ComprehensiveMeasurementOperationDataRecord(
-                            "Compare", id, "IMPERIAL_FOOT_BASED_UNIT", id, "IMPERIAL_FOOT_BASED_UNIT", 1.0, "Length"));
+                        repo.Save(new QuantityMeasurementEntity(
+                            "Compare", id, "Feet", id, "Feet", 1.0, "Length"));
                     }
                 });
             }
@@ -741,10 +735,10 @@ namespace QuantityMeasurementApp.Tests
             foreach (Thread t in threads) { t.Join(); }
 
             //verify all saves completed without data loss
-            Assert.AreEqual(threadCount * savesPerThread, repo.RetrieveTotalCountOfAllStoredMeasurementEntitiesFromDataStorage());
+            Assert.AreEqual(threadCount * savesPerThread, repo.GetTotalCount());
 
             //cleanup
-            repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+            repo.DeleteAll();
         }
 
         // -------------------------------------------------------
@@ -758,22 +752,22 @@ namespace QuantityMeasurementApp.Tests
         public void TestCacheRepository_LargeDataSet()
         {
             //get cache repository and clear all data before starting
-            AdvancedLocalJsonStorageManagerForMeasurementRecords repo =
-                AdvancedLocalJsonStorageManagerForMeasurementRecords.CreateOrRetrieveStorageManagerInstance();
-            repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+            QuantityMeasurementCacheRepository repo =
+                QuantityMeasurementCacheRepository.GetInstance();
+            repo.DeleteAll();
 
             //save exactly 1000 entities
             for (int i = 0; i < 1000; i++)
             {
-                repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(new ComprehensiveMeasurementOperationDataRecord(
-                    "Compare", i, "IMPERIAL_FOOT_BASED_UNIT", i, "IMPERIAL_FOOT_BASED_UNIT", 1.0, "Length"));
+                repo.Save(new QuantityMeasurementEntity(
+                    "Compare", i, "Feet", i, "Feet", 1.0, "Length"));
             }
 
             //record start time before retrieval
             DateTime start = DateTime.Now;
 
             //retrieve all 1000 records
-            List<ComprehensiveMeasurementOperationDataRecord> all = repo.RetrieveAllStoredQuantityMeasurementEntitiesFromDataStorage();
+            List<QuantityMeasurementEntity> all = repo.GetAll();
 
             //record end time after retrieval
             DateTime end = DateTime.Now;
@@ -785,7 +779,7 @@ namespace QuantityMeasurementApp.Tests
             Assert.IsTrue((end - start).TotalSeconds < 2);
 
             //cleanup
-            repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+            repo.DeleteAll();
         }
 
         // -------------------------------------------------------
@@ -803,24 +797,29 @@ namespace QuantityMeasurementApp.Tests
             System.Reflection.Assembly businessAssembly = System.Reflection.Assembly.Load("QuantityMeasurementAppBusiness");
 
             //check controller layer exists
-            Type controllerType = appAssembly.GetType("QuantityMeasurementApp.Controllers.QuantityMeasurementController");
+            Type controllerType = appAssembly.GetType(
+                "QuantityMeasurementApp.Controllers.QuantityMeasurementController");
             Assert.IsNotNull(controllerType, "Controller layer missing");
 
             //check service layer exists
             System.Reflection.Assembly servicesAssembly = System.Reflection.Assembly.Load("QuantityMeasurementAppServices");
-            Type serviceType = servicesAssembly.GetType("QuantityMeasurementApp.Services.QuantityMeasurementServiceImpl");
+            Type serviceType = servicesAssembly.GetType(
+                "QuantityMeasurementApp.Services.QuantityMeasurementServiceImpl");
             Assert.IsNotNull(serviceType, "Service layer missing");
 
             //check repository layer exists
-            Type repoType = repoAssembly.GetTypes().FirstOrDefault(t => t.Name == "AdvancedSqlDataAccessManagerForHandlingMeasurementPersistenceOperations");
+            Type repoType = repoAssembly.GetType(
+                "QuantityMeasurementAppRepositories.Repositories.QuantityMeasurementDatabaseRepository");
             Assert.IsNotNull(repoType, "Repository layer missing");
 
             //check entity layer exists
-            Type entityType = modelAssembly.GetType("QuantityMeasurementAppModels.Entities.ComprehensiveMeasurementOperationDataRecord");
+            Type entityType = modelAssembly.GetType(
+                "QuantityMeasurementAppModels.Entities.QuantityMeasurementEntity");
             Assert.IsNotNull(entityType, "Entity layer missing");
 
             //check exception layer exists
-            Type exceptionType = businessAssembly.GetType("QuantityMeasurementAppBusiness.Exceptions.DatabaseException");
+            Type exceptionType = businessAssembly.GetType(
+                "QuantityMeasurementAppBusiness.Exceptions.DatabaseException");
             Assert.IsNotNull(exceptionType, "Exception layer missing");
         }
 
@@ -833,15 +832,15 @@ namespace QuantityMeasurementApp.Tests
         public void TestConnectionPool_AllConnectionsExhausted()
         {
             //create config instance
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             try
             {
                 //get pool instance
-                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations pool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations.RetrieveSingletonInstanceOfConnectionPoolingManager(config);
+                ConnectionPool pool = ConnectionPool.GetInstance(config);
 
                 //get max pool size from config
-                int maxSize = config.RetrieveMaximumDatabaseConnectionPoolSizeFromConfiguration();
+                int maxSize = config.GetMaxPoolSize();
 
                 //acquire all connections from the pool
                 List<SqlConnection> connections = new List<SqlConnection>();
@@ -863,13 +862,13 @@ namespace QuantityMeasurementApp.Tests
                 }
 
                 //verify pool is functional after returning all connections
-                string stats = pool.RetrieveDetailedStatisticsInformationAboutRepositoryResourceUsageAndStorageState();
+                string stats = pool.GetPoolStatistics();
                 Assert.IsNotNull(stats);
             }
             catch (Exception ex)
             {
                 //mark as inconclusive if database is not available
-                Assert.Fail("Database error: " + ex.Message);
+                Assert.Inconclusive("Database not available: " + ex.Message);
             }
         }
 
@@ -882,25 +881,25 @@ namespace QuantityMeasurementApp.Tests
         public void TestTransactionRollback_OnError()
         {
             //create config and pool
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             try
             {
                 //create repository
-                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations pool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations.RetrieveSingletonInstanceOfConnectionPoolingManager(config);
-                IExtremelyAdvancedQuantityMeasurementRepositoryHandlingAllDataPersistenceOperations repo =
-                    new AdvancedSqlDataAccessManagerForHandlingMeasurementPersistenceOperations(pool);
+                ConnectionPool pool = ConnectionPool.GetInstance(config);
+                QuantityMeasurementDatabaseRepository repo =
+                    new QuantityMeasurementDatabaseRepository(pool);
 
                 //clear existing data before test
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
 
                 //get count before attempting bad save
-                int countBefore = repo.RetrieveTotalCountOfAllStoredMeasurementEntitiesFromDataStorage();
+                int countBefore = repo.GetTotalCount();
 
                 //attempt to save a null entity - should throw and not persist
                 try
                 {
-                    repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(null);
+                    repo.Save(null);
                 }
                 catch (Exception)
                 {
@@ -908,14 +907,14 @@ namespace QuantityMeasurementApp.Tests
                 }
 
                 //verify count did not change - nothing was persisted
-                int countAfter = repo.RetrieveTotalCountOfAllStoredMeasurementEntitiesFromDataStorage();
+                int countAfter = repo.GetTotalCount();
                 Assert.AreEqual(countBefore, countAfter,
                     "Failed operation should not persist data");
             }
             catch (Exception ex)
             {
                 //mark as inconclusive if database is not available
-                Assert.Fail("Database error: " + ex.Message);
+                Assert.Inconclusive("Database not available: " + ex.Message);
             }
         }
 
@@ -928,12 +927,12 @@ namespace QuantityMeasurementApp.Tests
         public void TestDatabaseSchema_TablesCreated()
         {
             //create config and pool
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             try
             {
                 //get pool instance
-                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations pool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations.RetrieveSingletonInstanceOfConnectionPoolingManager(config);
+                ConnectionPool pool = ConnectionPool.GetInstance(config);
 
                 //get a connection to query schema
                 SqlConnection conn = pool.GetConnection();
@@ -978,7 +977,7 @@ namespace QuantityMeasurementApp.Tests
             catch (Exception ex)
             {
                 //mark as inconclusive if database is not available
-                Assert.Fail("Database error: " + ex.Message);
+                Assert.Inconclusive("Database not available: " + ex.Message);
             }
         }
 
@@ -991,40 +990,40 @@ namespace QuantityMeasurementApp.Tests
         public void TestParameterizedQuery_DateTimeHandling()
         {
             //create config and pool
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             try
             {
                 //create repository
-                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations pool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations.RetrieveSingletonInstanceOfConnectionPoolingManager(config);
-                IExtremelyAdvancedQuantityMeasurementRepositoryHandlingAllDataPersistenceOperations repo =
-                    new AdvancedSqlDataAccessManagerForHandlingMeasurementPersistenceOperations(pool);
+                ConnectionPool pool = ConnectionPool.GetInstance(config);
+                QuantityMeasurementDatabaseRepository repo =
+                    new QuantityMeasurementDatabaseRepository(pool);
 
                 //clear existing data before test
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
 
                 //save entity with all fields populated
-                repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(new ComprehensiveMeasurementOperationDataRecord(
-                    "Compare", 1.0, "IMPERIAL_FOOT_BASED_UNIT", 1.0, "IMPERIAL_FOOT_BASED_UNIT", 1.0, "Length"));
+                repo.Save(new QuantityMeasurementEntity(
+                    "Compare", 1.0, "Feet", 1.0, "Feet", 1.0, "Length"));
 
                 //retrieve the saved entity
-                List<ComprehensiveMeasurementOperationDataRecord> all = repo.RetrieveAllStoredQuantityMeasurementEntitiesFromDataStorage();
+                List<QuantityMeasurementEntity> all = repo.GetAll();
 
                 //verify entity was saved and retrieved correctly
                 Assert.AreEqual(1, all.Count);
-                Assert.AreEqual("Compare", all[0].descriptiveOperationIdentifierName);
-                Assert.AreEqual("IMPERIAL_FOOT_BASED_UNIT", all[0].primaryInputUnitDescriptor);
-                Assert.AreEqual("Length", all[0].measurementCategoryDescriptor);
-                Assert.AreEqual(1.0, all[0].primaryInputNumericValue);
-                Assert.AreEqual(1.0, all[0].computedOutputResultValue);
+                Assert.AreEqual("Compare", all[0].Operation);
+                Assert.AreEqual("Feet", all[0].FirstUnit);
+                Assert.AreEqual("Length", all[0].MeasurementType);
+                Assert.AreEqual(1.0, all[0].FirstValue);
+                Assert.AreEqual(1.0, all[0].ResultValue);
 
                 //cleanup
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
             }
             catch (Exception ex)
             {
                 //mark as inconclusive if database is not available
-                Assert.Fail("Database error: " + ex.Message);
+                Assert.Inconclusive("Database not available: " + ex.Message);
             }
         }
 
@@ -1037,42 +1036,42 @@ namespace QuantityMeasurementApp.Tests
         public void TestBatchInsert_MultipleEntities()
         {
             //create config and pool
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings config = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings();
+            ApplicationConfig config = new ApplicationConfig();
 
             try
             {
                 //create repository
-                ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations pool = ExtremelyAdvancedThreadSafeDatabaseConnectionPoolingManagerForHandlingAllDatabaseConnectionLifecycleOperations.RetrieveSingletonInstanceOfConnectionPoolingManager(config);
-                IExtremelyAdvancedQuantityMeasurementRepositoryHandlingAllDataPersistenceOperations repo =
-                    new AdvancedSqlDataAccessManagerForHandlingMeasurementPersistenceOperations(pool);
+                ConnectionPool pool = ConnectionPool.GetInstance(config);
+                QuantityMeasurementDatabaseRepository repo =
+                    new QuantityMeasurementDatabaseRepository(pool);
 
                 //clear existing data before test
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
 
                 //save 20 entities in rapid succession
                 int batchSize = 20;
                 for (int i = 0; i < batchSize; i++)
                 {
-                    repo.SaveQuantityMeasurementEntityIntoUnderlyingDataStorageSystem(new ComprehensiveMeasurementOperationDataRecord(
-                        "Add", i, "IMPERIAL_FOOT_BASED_UNIT", i + 1.0, "IMPERIAL_FOOT_BASED_UNIT", i + i + 1.0, "Length"));
+                    repo.Save(new QuantityMeasurementEntity(
+                        "Add", i, "Feet", i + 1.0, "Feet", i + i + 1.0, "Length"));
                 }
 
                 //verify all entities saved
-                Assert.AreEqual(batchSize, repo.RetrieveTotalCountOfAllStoredMeasurementEntitiesFromDataStorage(),
+                Assert.AreEqual(batchSize, repo.GetTotalCount(),
                     "All batch entities should be saved");
 
                 //verify pool is still functional after batch
-                string stats = pool.RetrieveDetailedStatisticsInformationAboutRepositoryResourceUsageAndStorageState();
+                string stats = pool.GetPoolStatistics();
                 Assert.IsNotNull(stats,
                     "Pool should still be functional after batch insert");
 
                 //cleanup
-                repo.DeleteAllStoredMeasurementEntitiesFromUnderlyingDataStorageSystem();
+                repo.DeleteAll();
             }
             catch (Exception ex)
             {
                 //mark as inconclusive if database is not available
-                Assert.Fail("Database error: " + ex.Message);
+                Assert.Inconclusive("Database not available: " + ex.Message);
             }
         }
 
@@ -1114,13 +1113,13 @@ namespace QuantityMeasurementApp.Tests
                 "}");
 
             //verify database config reads correctly
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings dbConfig = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings(tempPathDb);
-            Assert.AreEqual("database", dbConfig.RetrieveRepositoryImplementationTypeFromConfiguration(),
+            ApplicationConfig dbConfig = new ApplicationConfig(tempPathDb);
+            Assert.AreEqual("database", dbConfig.GetRepositoryType(),
                 StringComparer.OrdinalIgnoreCase);
 
             //verify cache config reads correctly
-            ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings cacheConfig = new ExtremelyAdvancedApplicationConfigurationManagerForHandlingAllApplicationSettings(tempPathCache);
-            Assert.AreEqual("cache", cacheConfig.RetrieveRepositoryImplementationTypeFromConfiguration(),
+            ApplicationConfig cacheConfig = new ApplicationConfig(tempPathCache);
+            Assert.AreEqual("cache", cacheConfig.GetRepositoryType(),
                 StringComparer.OrdinalIgnoreCase);
 
             //cleanup temp files

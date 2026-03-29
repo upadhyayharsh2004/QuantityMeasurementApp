@@ -4,215 +4,221 @@ using QuantityMeasurementApp.Interfaces;
 
 namespace QuantityMeasurementApp.Menu
 {
-    public class QuantityMenu : IMenu
+    public class QuantityMenu:IMenu
     {
-        private readonly QuantityMeasurementController extremelyImportantControllerInstanceUsedForHandlingAllMenuOperations;
+        // Controller
+        private QuantityMeasurementController controller;
 
-        public QuantityMenu(QuantityMeasurementController incomingControllerDependencyObject)
-        {
-            this.extremelyImportantControllerInstanceUsedForHandlingAllMenuOperations = incomingControllerDependencyObject;
+        // Constructor
+        public QuantityMenu(QuantityMeasurementController controller)
+        {   
+            this.controller = controller;
         }
 
         public void Run()
         {
+            // infinite loop until user exits
             while (true)
             {
-                PrintHeader();
-                int userSelectedMenuChoiceValue = GetChoice();
+                // display menu
+                Console.WriteLine("===== Quantity Measurement App =====");
+                Console.WriteLine("1.  Compare Two Lengths");
+                Console.WriteLine("2.  Convert Length");
+                Console.WriteLine("3.  Add Two Lengths");
+                Console.WriteLine("4.  Subtract Two Lengths");
+                Console.WriteLine("5.  Divide Two Lengths");
+                Console.WriteLine("6.  Compare Two Weights");
+                Console.WriteLine("7.  Convert Weight");
+                Console.WriteLine("8.  Add Two Weights");
+                Console.WriteLine("9.  Subtract Two Weights");
+                Console.WriteLine("10. Divide Two Weights");
+                Console.WriteLine("11. Compare Two Volumes");
+                Console.WriteLine("12. Convert Volume");
+                Console.WriteLine("13. Add Two Volumes");
+                Console.WriteLine("14. Subtract Two Volumes");
+                Console.WriteLine("15. Divide Two Volumes");
+                Console.WriteLine("16. Compare Two Temperatures");
+                Console.WriteLine("17. Convert Temperature");
+                Console.WriteLine("18. Try Temperature Arithmetic");
+                Console.WriteLine("0.  Exit");
+                Console.Write("Enter Your Choice: ");
 
-                if (userSelectedMenuChoiceValue == 0)
+                // Take user's choice
+                int choice = int.Parse(Console.ReadLine());
+
+                // Exit
+                if (choice == 0)
                 {
-                    Console.WriteLine("✅ Thank you for using the Quantity Measurement Application. Goodbye!");
-                    break;
+                    Console.WriteLine("Exit Successful");
+                    return;
                 }
-
-                HandleSelection(userSelectedMenuChoiceValue);
+                // Compare two lengths
+                else if (choice == 1)
+                {
+                    QuantityDTO first = ReadQuantity("First", "Length", "Feet/Inch/Centimeter/Yard");
+                    QuantityDTO second = ReadQuantity("Second", "Length", "Feet/Inch/Centimeter/Yard");
+                    controller.PerformLengthComparison(first, second);
+                }
+                // Convert Length
+                else if (choice == 2)
+                {
+                    QuantityDTO quantity = ReadQuantity("", "Length", "Feet/Inch/Centimeter/Yard");
+                    Console.Write("Enter Target Unit (Feet/Inch/Centimeter/Yard): ");
+                    string targetUnit = Console.ReadLine();
+                    controller.PerformLengthConversion(quantity, targetUnit);
+                }
+                // Add Two Lengths
+                else if (choice == 3)
+                {
+                    QuantityDTO first = ReadQuantity("First", "Length", "Feet/Inch/Centimeter/Yard");
+                    QuantityDTO second = ReadQuantity("Second", "Length", "Feet/Inch/Centimeter/Yard");
+                    Console.Write("Enter Target Unit (Feet/Inch/Centimeter/Yard): ");
+                    string targetUnit = Console.ReadLine();
+                    controller.PerformLengthAddition(first, second, targetUnit);
+                }
+                // Subtract Two Lengths
+                else if (choice == 4)
+                {
+                    QuantityDTO first = ReadQuantity("First", "Length", "Feet/Inch/Centimeter/Yard");
+                    QuantityDTO second = ReadQuantity("Second", "Length", "Feet/Inch/Centimeter/Yard");
+                    Console.Write("Enter Target Unit (Feet/Inch/Centimeter/Yard): ");
+                    string targetUnit = Console.ReadLine();
+                    controller.PerformLengthSubtraction(first, second, targetUnit);
+                }
+                // Divide Two Lengths
+                else if (choice == 5)
+                {
+                    QuantityDTO first = ReadQuantity("First", "Length", "Feet/Inch/Centimeter/Yard");
+                    QuantityDTO second = ReadQuantity("Second", "Length", "Feet/Inch/Centimeter/Yard");
+                    controller.PerformLengthDivision(first, second);
+                }
+                // Compare Weights
+                else if (choice == 6)
+                {
+                    QuantityDTO first = ReadQuantity("First", "Weight", "Kilogram/Gram/Pound");
+                    QuantityDTO second = ReadQuantity("Second", "Weight", "Kilogram/Gram/Pound");
+                    controller.PerformWeightComparison(first, second);
+                }
+                // Convert Weight
+                else if (choice == 7)
+                {
+                    QuantityDTO quantity = ReadQuantity("", "Weight", "Kilogram/Gram/Pound");
+                    Console.Write("Enter Target Unit (Kilogram/Gram/Pound): ");
+                    string targetUnit = Console.ReadLine();
+                    controller.PerformWeightConversion(quantity, targetUnit);
+                }
+                // Add Weight
+                else if (choice == 8)
+                {
+                    QuantityDTO first = ReadQuantity("First", "Weight", "Kilogram/Gram/Pound");
+                    QuantityDTO second = ReadQuantity("Second", "Weight", "Kilogram/Gram/Pound");
+                    Console.Write("Enter Target Unit (Kilogram/Gram/Pound): ");
+                    string targetUnit = Console.ReadLine();
+                    controller.PerformWeightAddition(first, second, targetUnit);
+                }
+                // Subtract Weights
+                else if (choice == 9)
+                {
+                    QuantityDTO first = ReadQuantity("First", "Weight", "Kilogram/Gram/Pound");
+                    QuantityDTO second = ReadQuantity("Second", "Weight", "Kilogram/Gram/Pound");
+                    Console.Write("Enter Target Unit (Kilogram/Gram/Pound): ");
+                    string targetUnit = Console.ReadLine();
+                    controller.PerformWeightSubtraction(first, second, targetUnit);
+                }
+                // Weight Division
+                else if (choice == 10)
+                {
+                    QuantityDTO first = ReadQuantity("First", "Weight", "Kilogram/Gram/Pound");
+                    QuantityDTO second = ReadQuantity("Second", "Weight", "Kilogram/Gram/Pound");
+                    controller.PerformWeightDivision(first, second);
+                }
+                // Compare Volume
+                else if (choice == 11)
+                {
+                    QuantityDTO first = ReadQuantity("First", "Volume", "Litre/Millilitre/Gallon");
+                    QuantityDTO second = ReadQuantity("Second", "Volume", "Litre/Millilitre/Gallon");
+                    controller.PerformVolumeComparison(first, second);
+                }
+                // Convert Volume
+                else if (choice == 12)
+                {
+                    QuantityDTO quantity = ReadQuantity("", "Volume", "Litre/Millilitre/Gallon");
+                    Console.Write("Enter Target Unit (Litre/Millilitre/Gallon): ");
+                    string targetUnit = Console.ReadLine();
+                    controller.PerformVolumeConversion(quantity, targetUnit);
+                }
+                // Volume Addition
+                else if (choice == 13)
+                {
+                    QuantityDTO first = ReadQuantity("First", "Volume", "Litre/Millilitre/Gallon");
+                    QuantityDTO second = ReadQuantity("Second", "Volume", "Litre/Millilitre/Gallon");
+                    Console.Write("Enter Target Unit (Litre/Millilitre/Gallon): ");
+                    string targetUnit = Console.ReadLine();
+                    controller.PerformVolumeAddition(first, second, targetUnit);
+                }
+                // Volume Subtraction
+                else if (choice == 14)
+                {
+                    QuantityDTO first = ReadQuantity("First", "Volume", "Litre/Millilitre/Gallon");
+                    QuantityDTO second = ReadQuantity("Second", "Volume", "Litre/Millilitre/Gallon");
+                    Console.Write("Enter Target Unit (Litre/Millilitre/Gallon): ");
+                    string targetUnit = Console.ReadLine();
+                    controller.PerformVolumeSubtraction(first, second, targetUnit);
+                }
+                // Volume Division
+                else if (choice == 15)
+                {
+                    QuantityDTO first = ReadQuantity("First", "Volume", "Litre/Millilitre/Gallon");
+                    QuantityDTO second = ReadQuantity("Second", "Volume", "Litre/Millilitre/Gallon");
+                    controller.PerformVolumeDivision(first, second);
+                }
+                // Temperature Comparison
+                else if (choice == 16)
+                {
+                    QuantityDTO first = ReadQuantity("First", "Temperature", "Celsius/Fahrenheit/Kelvin");
+                    QuantityDTO second = ReadQuantity("Second", "Temperature", "Celsius/Fahrenheit/Kelvin");
+                    controller.PerformTemperatureComparison(first, second);
+                }
+                // Temperature Conversion
+                else if (choice == 17)
+                {
+                    QuantityDTO quantity = ReadQuantity("", "Temperature", "Celsius/Fahrenheit/Kelvin");
+                    Console.Write("Enter Target Unit (Celsius/Fahrenheit/Kelvin): ");
+                    string targetUnit = Console.ReadLine();
+                    controller.PerformTemperatureConversion(quantity, targetUnit);
+                }
+                // Temperature Arithmetic
+                else if (choice == 18)
+                {
+                    controller.PerformTemperatureArithmetic(
+                        new QuantityDTO(100, "Celsius", "Temperature"),
+                        new QuantityDTO(50, "Celsius", "Temperature"),
+                        "Celsius");
+                }
+                // Invalid Choice
+                else
+                {
+                    Console.WriteLine("Invalid Choice");
+                }
             }
         }
 
-        // ========================== DISPLAY ==========================
-
-        private void PrintHeader()
+        // Method to read input
+        private QuantityDTO ReadQuantity(string label, string measurementType, string unitHint)
         {
-            Console.WriteLine("\n========= WELCOME TO QUANTITY MEASUREMENT TOOL =========");
-
-            Console.WriteLine("\n[LENGTH OPERATIONS MENU]");
-            Console.WriteLine(" 1) Compare Lengths   2) Convert Length   3) Add Length   4) Subtract Length   5) Divide Length");
-
-            Console.WriteLine("\n[WEIGHT OPERATIONS MENU]");
-            Console.WriteLine(" 6) Compare Weights   7) Convert Weight   8) Add Weight   9) Subtract Weight   10) Divide Weight");
-
-            Console.WriteLine("\n[VOLUME OPERATIONS MENU]");
-            Console.WriteLine("11) Compare Volumes  12) Convert Volume  13) Add Volume  14) Subtract Volume  15) Divide Volume");
-
-            Console.WriteLine("\n[TEMPERATURE OPERATIONS MENU]");
-            Console.WriteLine("16) Compare Temperatures  17) Convert Temperature  18) Add Temperatures");
-
-            Console.WriteLine("\n0) Exit Application");
-        }
-
-        private int GetChoice()
-        {
-            Console.Write("\n👉 Enter your option: ");
-            int.TryParse(Console.ReadLine(), out int parsedUserChoiceValue);
-            return parsedUserChoiceValue;
-        }
-
-        // ========================== HANDLER ==========================
-
-        private void HandleSelection(int userSelectedMenuChoiceValue)
-        {
-            switch (userSelectedMenuChoiceValue)
+            string prefix = "";
+            if (label != "")
             {
-                case 1: Console.WriteLine("\n👉 You selected: Compare Lengths"); Compare("Length"); break;
-                case 2: Console.WriteLine("\n👉 You selected: Convert Length"); Convert("Length"); break;
-                case 3: Console.WriteLine("\n👉 You selected: Add Length"); Add("Length"); break;
-                case 4: Console.WriteLine("\n👉 You selected: Subtract Length"); Subtract("Length"); break;
-                case 5: Console.WriteLine("\n👉 You selected: Divide Length"); Divide("Length"); break;
-
-                case 6: Console.WriteLine("\n👉 You selected: Compare Weights"); Compare("Weight"); break;
-                case 7: Console.WriteLine("\n👉 You selected: Convert Weight"); Convert("Weight"); break;
-                case 8: Console.WriteLine("\n👉 You selected: Add Weight"); Add("Weight"); break;
-                case 9: Console.WriteLine("\n👉 You selected: Subtract Weight"); Subtract("Weight"); break;
-                case 10: Console.WriteLine("\n👉 You selected: Divide Weight"); Divide("Weight"); break;
-
-                case 11: Console.WriteLine("\n👉 You selected: Compare Volumes"); Compare("Volume"); break;
-                case 12: Console.WriteLine("\n👉 You selected: Convert Volume"); Convert("Volume"); break;
-                case 13: Console.WriteLine("\n👉 You selected: Add Volume"); Add("Volume"); break;
-                case 14: Console.WriteLine("\n👉 You selected: Subtract Volume"); Subtract("Volume"); break;
-                case 15: Console.WriteLine("\n👉 You selected: Divide Volume"); Divide("Volume"); break;
-
-                case 16: Console.WriteLine("\n👉 You selected: Compare Temperatures"); Compare("Temperature"); break;
-                case 17: Console.WriteLine("\n👉 You selected: Convert Temperature"); Convert("Temperature"); break;
-                case 18: Console.WriteLine("\n👉 You selected: Add Temperatures"); AddTemperature(); break;
-
-                default:
-                    Console.WriteLine("❌ Invalid selection! Please choose a valid option from the menu.");
-                    break;
-            }
-        }
-
-        // ========================== OPERATIONS ==========================
-
-        private void Compare(string type)
-        {
-            var firstQuantityInputObject = Input(type, "First");
-            var secondQuantityInputObject = Input(type, "Second");
-
-            if (type == "Length")
-                extremelyImportantControllerInstanceUsedForHandlingAllMenuOperations.PerformLengthComparisonBetweenTwoGivenLengthQuantityObjectsAndDisplayWhetherTheyAreEqualOrNot(firstQuantityInputObject, secondQuantityInputObject);
-
-            else if (type == "Weight")
-                extremelyImportantControllerInstanceUsedForHandlingAllMenuOperations.PerformWeightComparisonBetweenTwoGivenWeightQuantitiesAndDisplayResult(firstQuantityInputObject, secondQuantityInputObject);
-
-            else if (type == "Volume")
-                extremelyImportantControllerInstanceUsedForHandlingAllMenuOperations.PerformVolumeComparisonBetweenTwoGivenVolumeQuantitiesAndDisplayResult(firstQuantityInputObject, secondQuantityInputObject);
-
-            else
-                extremelyImportantControllerInstanceUsedForHandlingAllMenuOperations.PerformTemperatureComparisonBetweenTwoTemperatureQuantitiesAndDisplayResult(firstQuantityInputObject, secondQuantityInputObject);
-        }
-
-        private void Convert(string type)
-        {
-            var quantityInputObjectForConversion = Input(type, "");
-
-            Console.Write("👉 Enter target unit: ");
-            string targetUnitForConversion = Console.ReadLine();
-
-            if (type == "Length")
-                extremelyImportantControllerInstanceUsedForHandlingAllMenuOperations.PerformLengthConversionFromOneUnitToAnotherUnitAndDisplayTheConvertedResult(quantityInputObjectForConversion, targetUnitForConversion);
-
-            else if (type == "Weight")
-                extremelyImportantControllerInstanceUsedForHandlingAllMenuOperations.PerformWeightConversionFromOneUnitToAnotherUnitAndDisplayResult(quantityInputObjectForConversion, targetUnitForConversion);
-
-            else if (type == "Volume")
-                extremelyImportantControllerInstanceUsedForHandlingAllMenuOperations.PerformVolumeConversionFromOneUnitToAnotherUnitAndDisplayResult(quantityInputObjectForConversion, targetUnitForConversion);
-
-            else
-                extremelyImportantControllerInstanceUsedForHandlingAllMenuOperations.PerformTemperatureConversionFromOneUnitToAnotherUnitAndDisplayResult(quantityInputObjectForConversion, targetUnitForConversion);
-        }
-
-        private void Add(string type)
-        {
-            var firstQuantityInputObject = Input(type, "First");
-            var secondQuantityInputObject = Input(type, "Second");
-
-            Console.Write("👉 Enter result unit: ");
-            string targetUnitForAddition = Console.ReadLine();
-
-            if (type == "Length")
-                extremelyImportantControllerInstanceUsedForHandlingAllMenuOperations.PerformAdditionOfTwoLengthQuantitiesAndDisplayResultInSpecifiedTargetUnit(firstQuantityInputObject, secondQuantityInputObject, targetUnitForAddition);
-
-            else if (type == "Weight")
-                extremelyImportantControllerInstanceUsedForHandlingAllMenuOperations.PerformAdditionOfTwoWeightQuantitiesAndDisplayResult(firstQuantityInputObject, secondQuantityInputObject, targetUnitForAddition);
-
-            else if (type == "Volume")
-                extremelyImportantControllerInstanceUsedForHandlingAllMenuOperations.PerformVolumeAdditionBetweenTwoVolumeQuantitiesAndDisplayResult(firstQuantityInputObject, secondQuantityInputObject, targetUnitForAddition);
-        }
-
-        private void Subtract(string type)
-        {
-            var firstQuantityInputObject = Input(type, "First");
-            var secondQuantityInputObject = Input(type, "Second");
-
-            Console.Write("👉 Enter result unit: ");
-            string targetUnitForSubtraction = Console.ReadLine();
-
-            if (type == "Length")
-                extremelyImportantControllerInstanceUsedForHandlingAllMenuOperations.PerformSubtractionOfTwoLengthQuantitiesAndDisplayResultInSpecifiedTargetUnit(firstQuantityInputObject, secondQuantityInputObject, targetUnitForSubtraction);
-
-            else if (type == "Weight")
-                extremelyImportantControllerInstanceUsedForHandlingAllMenuOperations.PerformSubtractionOfTwoWeightQuantitiesAndDisplayResult(firstQuantityInputObject, secondQuantityInputObject, targetUnitForSubtraction);
-
-            else if (type == "Volume")
-                extremelyImportantControllerInstanceUsedForHandlingAllMenuOperations.PerformVolumeSubtractionBetweenTwoVolumeQuantitiesAndDisplayResult(firstQuantityInputObject, secondQuantityInputObject, targetUnitForSubtraction);
-        }
-
-        private void Divide(string type)
-        {
-            var firstQuantityInputObject = Input(type, "First");
-            var secondQuantityInputObject = Input(type, "Second");
-
-            if (type == "Length")
-                extremelyImportantControllerInstanceUsedForHandlingAllMenuOperations.PerformDivisionOfTwoLengthQuantitiesAndDisplayNumericalResult(firstQuantityInputObject, secondQuantityInputObject);
-
-            else if (type == "Weight")
-                extremelyImportantControllerInstanceUsedForHandlingAllMenuOperations.PerformDivisionOfTwoWeightQuantitiesAndDisplayResult(firstQuantityInputObject, secondQuantityInputObject);
-
-            else if (type == "Volume")
-                extremelyImportantControllerInstanceUsedForHandlingAllMenuOperations.PerformVolumeDivisionBetweenTwoVolumeQuantitiesAndDisplayResult(firstQuantityInputObject, secondQuantityInputObject);
-        }
-
-        private void AddTemperature()
-        {
-            var firstTemperatureQuantityObject = Input("Temperature", "First");
-            var secondTemperatureQuantityObject = Input("Temperature", "Second");
-
-            Console.Write("👉 Enter result unit: ");
-            string targetUnitForTemperatureAddition = Console.ReadLine();
-
-            extremelyImportantControllerInstanceUsedForHandlingAllMenuOperations.PerformTemperatureArithmeticOperationBetweenTwoTemperatureQuantitiesAndDisplayResult(firstTemperatureQuantityObject, secondTemperatureQuantityObject, targetUnitForTemperatureAddition);
-        }
-
-        // ========================== INPUT ==========================
-
-        private UniversalMeasurementDataCarrierObject Input(string type, string label)
-        {
-            string prefix = string.IsNullOrEmpty(label) ? "" : label + " ";
-
-            Console.Write($"👉 Enter {prefix}Value: ");
-            double parsedNumericValue = double.Parse(Console.ReadLine());
-
-            Console.Write($"👉 Enter {prefix}Unit: ");
-            string unitInputFromUser = Console.ReadLine();
-
-            if (string.IsNullOrWhiteSpace(unitInputFromUser))
-            {
-                Console.WriteLine("❌ Unit cannot be empty! Please enter a valid unit.");
-                return Input(type, label);
+                prefix = label + " ";
             }
 
-            return new UniversalMeasurementDataCarrierObject(parsedNumericValue, unitInputFromUser, type);
+            Console.Write("Enter " + prefix + "Value: ");
+            double value = double.Parse(Console.ReadLine());
+
+            Console.Write("Enter " + prefix + "Unit (" + unitHint + "): ");
+            string unit = Console.ReadLine();
+
+            return new QuantityDTO(value, unit, measurementType);
         }
     }
 }
