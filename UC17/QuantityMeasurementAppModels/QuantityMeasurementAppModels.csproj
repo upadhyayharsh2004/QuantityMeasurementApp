@@ -15,10 +15,6 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="10.1.7" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\QuantityMeasurementAppRepositories\QuantityMeasurementAppRepositories.csproj" />
-  </ItemGroup>
-
   <PropertyGroup>
   <TargetFramework>net8.0</TargetFramework>
   <GenerateDocumentationFile>true</GenerateDocumentationFile>

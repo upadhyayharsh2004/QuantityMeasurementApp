@@ -1,4 +1,5 @@
 C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppRepositories\bin\Debug\net8.0\QuantityMeasurementAppRepositories.deps.json
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppRepositories\bin\Debug\net8.0\QuantityMeasurementAppRepositories.runtimeconfig.json
 C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppRepositories\bin\Debug\net8.0\QuantityMeasurementAppRepositories.dll
 C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppRepositories\bin\Debug\net8.0\QuantityMeasurementAppRepositories.pdb
 C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppRepositories\bin\Debug\net8.0\QuantityMeasurementAppModels.dll
@@ -14,6 +15,5 @@ C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppReposit
 C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppRepositories\obj\Debug\net8.0\QuantityMeasurementAppRepositories.dll
 C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppRepositories\obj\Debug\net8.0\refint\QuantityMeasurementAppRepositories.dll
 C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppRepositories\obj\Debug\net8.0\QuantityMeasurementAppRepositories.pdb
-C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppRepositories\obj\Debug\net8.0\ref\QuantityMeasurementAppRepositories.dll
-C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppRepositories\bin\Debug\net8.0\QuantityMeasurementAppRepositories.runtimeconfig.json
 C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppRepositories\obj\Debug\net8.0\QuantityMeasurementAppRepositories.genruntimeconfig.cache
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppRepositories\obj\Debug\net8.0\ref\QuantityMeasurementAppRepositories.dll

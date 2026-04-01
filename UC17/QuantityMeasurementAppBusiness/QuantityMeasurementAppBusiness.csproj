@@ -7,12 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Business depends on Repository + Models -->
     <ProjectReference Include="..\QuantityMeasurementAppModels\QuantityMeasurementAppModels.csproj" />
   </ItemGroup>
-
-  <PropertyGroup>
-  <TargetFramework>net8.0</TargetFramework>
-  <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
 
 </Project>
