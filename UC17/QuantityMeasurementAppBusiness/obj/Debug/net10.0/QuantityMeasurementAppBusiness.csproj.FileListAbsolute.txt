@@ -1,0 +1,16 @@
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppBusiness\bin\Debug\net10.0\QuantityMeasurementAppBusiness.deps.json
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppBusiness\bin\Debug\net10.0\QuantityMeasurementAppBusiness.dll
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppBusiness\bin\Debug\net10.0\QuantityMeasurementAppBusiness.pdb
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppBusiness\bin\Debug\net10.0\QuantityMeasurementAppModels.dll
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppBusiness\bin\Debug\net10.0\QuantityMeasurementAppModels.pdb
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppBusiness\obj\Debug\net10.0\QuantityMeasurementAppBusiness.csproj.AssemblyReference.cache
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppBusiness\obj\Debug\net10.0\QuantityMeasurementAppBusiness.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppBusiness\obj\Debug\net10.0\QuantityMeasurementAppBusiness.AssemblyInfoInputs.cache
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppBusiness\obj\Debug\net10.0\QuantityMeasurementAppBusiness.AssemblyInfo.cs
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppBusiness\obj\Debug\net10.0\QuantityMeasurementAppBusiness.csproj.CoreCompileInputs.cache
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppBusiness\obj\Debug\net10.0\QuantityMeasurementAppBusiness.sourcelink.json
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppBusiness\obj\Debug\net10.0\Quantity.36EEC7CD.Up2Date
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppBusiness\obj\Debug\net10.0\QuantityMeasurementAppBusiness.dll
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppBusiness\obj\Debug\net10.0\refint\QuantityMeasurementAppBusiness.dll
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppBusiness\obj\Debug\net10.0\QuantityMeasurementAppBusiness.pdb
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppBusiness\obj\Debug\net10.0\ref\QuantityMeasurementAppBusiness.dll

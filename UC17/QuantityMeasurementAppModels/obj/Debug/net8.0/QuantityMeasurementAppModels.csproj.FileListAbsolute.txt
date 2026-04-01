@@ -1,0 +1,15 @@
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppModels\bin\Debug\net8.0\QuantityMeasurementAppModels.deps.json
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppModels\bin\Debug\net8.0\QuantityMeasurementAppModels.dll
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppModels\bin\Debug\net8.0\QuantityMeasurementAppModels.pdb
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppModels\bin\Debug\net8.0\QuantityMeasurementAppModels.xml
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppModels\obj\Debug\net8.0\QuantityMeasurementAppModels.csproj.AssemblyReference.cache
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppModels\obj\Debug\net8.0\QuantityMeasurementAppModels.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppModels\obj\Debug\net8.0\QuantityMeasurementAppModels.AssemblyInfoInputs.cache
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppModels\obj\Debug\net8.0\QuantityMeasurementAppModels.AssemblyInfo.cs
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppModels\obj\Debug\net8.0\QuantityMeasurementAppModels.csproj.CoreCompileInputs.cache
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppModels\obj\Debug\net8.0\QuantityMeasurementAppModels.sourcelink.json
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppModels\obj\Debug\net8.0\QuantityMeasurementAppModels.dll
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppModels\obj\Debug\net8.0\refint\QuantityMeasurementAppModels.dll
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppModels\obj\Debug\net8.0\QuantityMeasurementAppModels.xml
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppModels\obj\Debug\net8.0\QuantityMeasurementAppModels.pdb
+C:\Users\harsh\Desktop\QuantityMeasurementApp\UC17\QuantityMeasurementAppModels\obj\Debug\net8.0\ref\QuantityMeasurementAppModels.dll
