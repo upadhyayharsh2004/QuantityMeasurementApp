@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "7oNtNuGcaWY=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\harsh\\Desktop\\QuantityMeasurementApp\\UC18\\QuantityMeasurementAppModels\\QuantityMeasurementAppModels.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\harsh\\.nuget\\packages\\microsoft.openapi\\1.6.14\\microsoft.openapi.1.6.14.nupkg.sha512",
+    "C:\\Users\\harsh\\.nuget\\packages\\swashbuckle.aspnetcore.annotations\\6.6.2\\swashbuckle.aspnetcore.annotations.6.6.2.nupkg.sha512",
+    "C:\\Users\\harsh\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.6.2\\swashbuckle.aspnetcore.swagger.6.6.2.nupkg.sha512",
+    "C:\\Users\\harsh\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.6.2\\swashbuckle.aspnetcore.swaggergen.6.6.2.nupkg.sha512"
+  ],
+  "logs": []
+}
