@@ -1,8 +1,13 @@
+using System.Reflection;
 using System.Text;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Builder;
+using QuantityMeasurementApp.Services;
 using QuantityMeasurementAppRepositories.Context;
 using QuantityMeasurementAppRepositories.Interfaces;
 using QuantityMeasurementAppRepositories.Repositories;
@@ -10,99 +15,85 @@ using QuantityMeasurementAppServices.Interfaces;
 using QuantityMeasurementAppServices.Services;
 using QuantityMeasurementWebApi.Middleware;
 
-var builder = WebApplication.CreateBuilder(args);
 
-string jwtKey = Environment.GetEnvironmentVariable("JWT_KEY")
-    ?? builder.Configuration["Jwt:Key"]
-    ?? "DevelopmentOnlyInsecureKeyDoNotUseInProd12345!";
+var builderWebApplication = WebApplication.CreateBuilder(args);
 
-// ================== DATABASE ==================
-builder.Services.AddDbContext<DatabaseAppContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builderWebApplication.Services.AddDbContext<DatabaseAppContext>(options => options.UseSqlServer(builderWebApplication.Configuration.GetConnectionString("DefaultConnection")));
 
-// ================== DEPENDENCY INJECTION ==================
-builder.Services.AddScoped<IQuantityLogRepository, QuantityRepository>();
-builder.Services.AddScoped<IQuantityServiceImplsConvert, QuantityWebServiceImpl>();
-builder.Services.AddScoped<IQuantityWebService, QuantityWebServiceImpl>();
-builder.Services.AddScoped<IAuthRepository, AuthRepository>();
-builder.Services.AddScoped<IAuthService, AuthServiceImpl>();
+builderWebApplication.Services.AddScoped<IQuantityLogRepository, QuantityRepository>();
+builderWebApplication.Services.AddScoped<IQuantityServiceImplsConvert, QuantityImplService>();
+builderWebApplication.Services.AddScoped<IQuantityServiceImplWeb, QuantityWebServiceImpl>();
+builderWebApplication.Services.AddScoped<IPersonRepository, PersonRepository>();
+builderWebApplication.Services.AddScoped<JsonWebTokenService>();
+builderWebApplication.Services.AddScoped<IAuthService, AuthenticationService>();
 
-// ================== JWT AUTHENTICATION ==================
-builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer           = true,
-            ValidateAudience         = true,
-            ValidateLifetime         = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer              = builder.Configuration["Jwt:Issuer"],
-            ValidAudience            = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey         = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
-            ClockSkew                = TimeSpan.Zero
-        };
-    });
 
-builder.Services.AddAuthorization();
+builderWebApplication.Services.AddScoped<EncryptedService>();
+builderWebApplication.Services.AddScoped<HashCodeService>();
 
-// ================== CORS ==================
-builder.Services.AddCors(options =>
+
+builderWebApplication.Services.AddHttpContextAccessor();
+
+string jwtSecretKey = builderWebApplication.Configuration["Jwt:SecretKey"] ?? throw new Exception("JWT SecretKey missing");
+string jwtIssuer = builderWebApplication.Configuration["Jwt:Issuer"]!;
+string jwtAudience = builderWebApplication.Configuration["Jwt:Audience"]!;
+
+builderWebApplication.Services.AddAuthentication(options =>
 {
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy.WithOrigins("http://localhost:3000", "http://localhost:3001",
-                           "http://127.0.0.1:5500", "http://localhost:5500")
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials();
-    });
-});
-
-// ================== CONTROLLERS + GLOBAL EXCEPTION HANDLER ==================
-builder.Services.AddControllers(options =>
-{
-    options.Filters.Add<ApplicationErrorHandler>();
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
-.ConfigureApiBehaviorOptions(options =>
+.AddJwtBearer(options =>
 {
-    options.InvalidModelStateResponseFactory = context =>
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        IEnumerable<string> errors = context.ModelState.Values
-            .SelectMany(v => v.Errors)
-            .Select(e => e.ErrorMessage);
-        var response = new
+        ValidateIssuer = true,
+        ValidIssuer = jwtIssuer,
+        ValidateAudience = true,
+        ValidAudience = jwtAudience,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey)),
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero
+    };
+
+    options.Events = new JwtBearerEvents
+    {
+        OnChallenge = async context =>
         {
-            Timestamp = DateTime.UtcNow.ToString("o"),
-            Status    = 400,
-            Error     = "Validation Failed",
-            Message   = string.Join("; ", errors),
-            Path      = context.HttpContext.Request.Path.ToString()
-        };
-        return new Microsoft.AspNetCore.Mvc.BadRequestObjectResult(response);
+            context.HandleResponse();
+            context.Response.StatusCode = 401;
+            context.Response.ContentType = "application/json";
+            string body = System.Text.Json.JsonSerializer.Serialize(new
+            {
+                Timestamp = DateTime.UtcNow.ToString("o"),
+                Status = 401,
+                Error = "Unauthorized",
+                Message = "You must be logged in. Register at POST /api/v1/auth/register or login at POST /api/v1/auth/login",
+                Path = context.Request.Path.ToString()
+            });
+            await context.Response.WriteAsync(body);
+        }
     };
 });
-
-// ================== SWAGGER ==================
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
+builderWebApplication.Services.AddAuthorization();
+builderWebApplication.Services.AddEndpointsApiExplorer();
+builderWebApplication.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title       = "Quantity Measurement API",
-        Version     = "v1",
-        Description = "REST API for quantity measurement — UC18: Google Auth & JWT"
+        Title = "Quantity Measurement API",
+        Version = "v1"
     });
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Name         = "Authorization",
-        Type         = SecuritySchemeType.Http,
-        Scheme       = "Bearer",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
         BearerFormat = "JWT",
-        In           = ParameterLocation.Header,
-        Description  = "Enter: Bearer {your JWT token}"
+        In = ParameterLocation.Header,
+        Description = "Paste your JWT token here (without 'Bearer' prefix - Swagger adds it automatically)"
     });
 
     options.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -110,40 +101,71 @@ builder.Services.AddSwaggerGen(options =>
         {
             new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id   = "Bearer"
+                }
             },
-            Array.Empty<string>()
+            new List<string>()
         }
     });
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    options.IncludeXmlComments(xmlPath);
+});
+//adding the swagger gen into the code 
 
-    string xmlFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "QuantityMeasurementAppWebAPI.xml");
-    if (File.Exists(xmlFile)) options.IncludeXmlComments(xmlFile);
+builderWebApplication.Services.AddControllers(optionsServices =>
+{
+    optionsServices.Filters.Add<ApplicationErrorHandler>();
+})
+.ConfigureApiBehaviorOptions(optionsServices =>
+{
+    optionsServices.InvalidModelStateResponseFactory = contextServices =>
+    {
+        var errors = contextServices.ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+
+        var responseService = new
+        {
+            TimestampDTOs = DateTime.UtcNow.ToString("o"),
+            StatusDTOs = 400,
+            ErrorDTOs = "Validation Request Server Failed",
+            MessageDTOs = errors.Any()? string.Join("; ", errors)
+                : "Invalid request",
+            PathDTOs = contextServices.HttpContext.Request.Path.ToString()
+        };
+
+        return new Microsoft.AspNetCore.Mvc.BadRequestObjectResult(responseService);
+    };
 });
 
-builder.Services.AddHealthChecks();
+builderWebApplication.Services.AddHealthChecks();
 
-var app = builder.Build();
+var appServices = builderWebApplication.Build();
 
-using (IServiceScope scope = app.Services.CreateScope())
+
+using (var scope = appServices.Services.CreateScope())
 {
-    DatabaseAppContext db = scope.ServiceProvider.GetRequiredService<DatabaseAppContext>();
-    db.Database.Migrate();
+    var databaseMigrate = scope.ServiceProvider.GetRequiredService<DatabaseAppContext>();
+    databaseMigrate.Database.Migrate();
+
 }
-
-app.UseSwagger();
-app.UseSwaggerUI(c =>
+if (appServices.Environment.IsDevelopment())
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Quantity Measurement API v1");
-    c.RoutePrefix = "swagger";
-});
+    appServices.UseSwagger();
+    appServices.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Quantity Measurement API v1");
+        options.RoutePrefix = "swagger";
+    });
+}
+//appServices.UseHttpsRedirection();
+appServices.UseAuthentication();
+appServices.UseAuthorization();
 
-app.UseHttpsRedirection();
-app.UseCors("AllowFrontend");
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
-app.MapHealthChecks("/health");
+appServices.MapControllers();
 
-app.Run();
+appServices.MapHealthChecks("/health");
 
-public partial class Program { }
+appServices.Run();
