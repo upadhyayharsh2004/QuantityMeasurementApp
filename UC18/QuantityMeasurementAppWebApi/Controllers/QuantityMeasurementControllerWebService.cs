@@ -10,7 +10,6 @@ namespace QuantityMeasurementAppWebAPI.Controllers
 {
     [ApiController]
     [Route("api/v1/quantities")]
-    [Authorize]
     public class QuantityMeasurementControllerWebService : ControllerBase
     {
         private IQuantityServiceImplWeb serviceImpl;
@@ -20,7 +19,7 @@ namespace QuantityMeasurementAppWebAPI.Controllers
         }
         private long FetchSessionUserId()
         {
-            string? personIdClaim = User.FindFirstValue("personId");
+            string? personIdClaim = User.FindFirstValue("userId");
             if (personIdClaim == null)
             {
                 return 0;
@@ -39,7 +38,7 @@ namespace QuantityMeasurementAppWebAPI.Controllers
         [ProducesResponseType(401)]
         public IActionResult Subtraction([FromBody] ArithmeticRequestDTOs request)
         {
-            QuantityMeasurementDTOResponse resultWeb = serviceImpl.DifferenceWeb(request,FetchSessionUserId());
+            QuantityMeasurementDTOResponse resultWeb = serviceImpl.DifferenceWeb(request, FetchSessionUserId());
             return Ok(resultWeb);
         }
 
@@ -49,10 +48,10 @@ namespace QuantityMeasurementAppWebAPI.Controllers
         [ProducesResponseType(401)]
         public IActionResult Addition([FromBody] ArithmeticRequestDTOs request)
         {
-            QuantityMeasurementDTOResponse resultWeb = serviceImpl.CombineWeb(request,FetchSessionUserId());
+            QuantityMeasurementDTOResponse resultWeb = serviceImpl.CombineWeb(request, FetchSessionUserId());
             return Ok(resultWeb);
         }
-
+        [Authorize]
         [HttpGet("history/errored")]
         [ProducesResponseType(typeof(List<QuantityMeasurementDTOResponse>), 200)]
         [ProducesResponseType(401)]
@@ -61,23 +60,23 @@ namespace QuantityMeasurementAppWebAPI.Controllers
             List<QuantityMeasurementDTOResponse> resultWeb = serviceImpl.FetchWebErrorHistory(FetchSessionUserId());
             return Ok(resultWeb);//hogya
         }
-
+        [Authorize]
         [HttpGet("history/operation/{operation}")]
         [ProducesResponseType(typeof(List<QuantityMeasurementDTOResponse>), 200)]
         [ProducesResponseType(401)]
         public IActionResult FetchWebHistoryByOperation(string operation)
         {
-            List<QuantityMeasurementDTOResponse>  resultWeb = serviceImpl.FetchWebHistoryByOperation(operation,FetchSessionUserId());
+            List<QuantityMeasurementDTOResponse> resultWeb = serviceImpl.FetchWebHistoryByOperation(operation, FetchSessionUserId());
             return Ok(resultWeb);
         }
 
-
+        [Authorize]
         [HttpGet("history/type/{type}")]
         [ProducesResponseType(typeof(List<QuantityMeasurementDTOResponse>), 200)]
         [ProducesResponseType(401)]
         public IActionResult FetchWebHistoryByType(string type)
         {
-            List<QuantityMeasurementDTOResponse> resultWeb= serviceImpl.FetchWebHistoryByType(type,FetchSessionUserId());
+            List<QuantityMeasurementDTOResponse> resultWeb = serviceImpl.FetchWebHistoryByType(type, FetchSessionUserId());
             return Ok(resultWeb);//hogya
         }
 
@@ -87,7 +86,7 @@ namespace QuantityMeasurementAppWebAPI.Controllers
         [ProducesResponseType(401)]
         public IActionResult Converison([FromBody] ConvertRequestDTOs request)
         {
-            QuantityMeasurementDTOResponse resultWeb = serviceImpl.ConversionWeb(request,FetchSessionUserId());
+            QuantityMeasurementDTOResponse resultWeb = serviceImpl.ConversionWeb(request, FetchSessionUserId());
             return Ok(resultWeb);
         }
 
@@ -97,7 +96,7 @@ namespace QuantityMeasurementAppWebAPI.Controllers
         [ProducesResponseType(401)]
         public IActionResult Division([FromBody] QuantityInputRequestDTOs request)
         {
-            QuantityMeasurementDTOResponse resultWeb = serviceImpl.DivisonWeb(request,FetchSessionUserId());
+            QuantityMeasurementDTOResponse resultWeb = serviceImpl.DivisonWeb(request, FetchSessionUserId());
             return Ok(resultWeb);
         }
 
@@ -106,17 +105,28 @@ namespace QuantityMeasurementAppWebAPI.Controllers
         [ProducesResponseType(401)]
         public IActionResult FetchWebsOperationCount(string operation)
         {
-            int countServices = serviceImpl.FetchWebsOperationCount(operation,FetchSessionUserId());
+            int countServices = serviceImpl.FetchWebsOperationCount(operation, FetchSessionUserId());
             return Ok(countServices);//hogya
         }
 
+        // [HttpPost("comparison")]
+        // [ProducesResponseType(typeof(QuantityMeasurementDTOResponse), 200)]
+        // [ProducesResponseType(400)]
+        // [ProducesResponseType(401)]
+        // public IActionResult Comparison([FromBody] QuantityInputRequestDTOs request)
+        // {
+        //     QuantityMeasurementDTOResponse resultWeb = serviceImpl.ComparisonWeb(request,FetchSessionUserId());
+        //     return Ok(resultWeb);
+        // }
         [HttpPost("comparison")]
         [ProducesResponseType(typeof(QuantityMeasurementDTOResponse), 200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         public IActionResult Comparison([FromBody] QuantityInputRequestDTOs request)
         {
-            QuantityMeasurementDTOResponse resultWeb = serviceImpl.ComparisonWeb(request,FetchSessionUserId());
+            QuantityMeasurementDTOResponse resultWeb =
+                serviceImpl.ComparisonWeb(request, FetchSessionUserId());
+
             return Ok(resultWeb);
         }
         [HttpGet("me")]
@@ -129,5 +139,6 @@ namespace QuantityMeasurementAppWebAPI.Controllers
                 Name = User.FindFirstValue("name") ?? "Not Recognized User"
             });
         }
+
     }
 }

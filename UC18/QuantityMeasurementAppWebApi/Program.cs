@@ -131,7 +131,7 @@ builderWebApplication.Services.AddControllers(optionsServices =>
             TimestampDTOs = DateTime.UtcNow.ToString("o"),
             StatusDTOs = 400,
             ErrorDTOs = "Validation Request Server Failed",
-            MessageDTOs = errors.Any()? string.Join("; ", errors)
+            MessageDTOs = errors.Any() ? string.Join("; ", errors)
                 : "Invalid request",
             PathDTOs = contextServices.HttpContext.Request.Path.ToString()
         };
@@ -142,7 +142,27 @@ builderWebApplication.Services.AddControllers(optionsServices =>
 
 builderWebApplication.Services.AddHealthChecks();
 
+builderWebApplication.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins(
+                    "http://127.0.0.1:5500",
+                    "http://127.0.0.1:5502",
+                    "http://localhost:5502",
+                    "http://localhost:5500",
+                    "http://127.0.0.1:5501",   
+                    "http://localhost:5501"    
+                )
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
 var appServices = builderWebApplication.Build();
+
+appServices.UseCors("AllowFrontend");
 
 
 using (var scope = appServices.Services.CreateScope())

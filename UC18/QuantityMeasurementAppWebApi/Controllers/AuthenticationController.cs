@@ -71,7 +71,7 @@ namespace QuantityMeasurementAppWebAPI.Controllers
         [HttpGet("ping")]
         public IActionResult Ping()
         {
-            return Ok(new { Message = "Auth running. Register at POST /api/v1/auth/register, Login at POST /api/v1/auth/login" });
+            return Ok(new { Message = "Auth running. Register at POST /api/v1/auth/signup, Login at POST /api/v1/auth/signin" });
         }
     }
 }

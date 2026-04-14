@@ -52,10 +52,10 @@ namespace QuantityMeasurementAppRepositories.Repositories
         }
         public List<QuantityEntity> GetAllRecords(long personId)
         {
-            if (personId == 0)
-            {
-                return DatabaseContext.MeasurementRecordsEntity.OrderByDescending(entity => entity.EntityCreatedAt).ToList();
-            }
+            // if (personId == 0)
+            // {
+            //     return DatabaseContext.MeasurementRecordsEntity.OrderByDescending(entity => entity.EntityCreatedAt).ToList();
+            // }
 
             return DatabaseContext.MeasurementRecordsEntity.Where(entity=>entity.EntityUserId== personId).OrderByDescending(e => e.EntityCreatedAt).ToList();
         }

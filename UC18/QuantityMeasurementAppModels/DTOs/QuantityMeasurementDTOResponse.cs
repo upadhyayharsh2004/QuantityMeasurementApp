@@ -30,12 +30,20 @@ namespace QuantityMeasurementAppModels.DTOs
 
             dto.ThisValueDTOs = entity.EntityFirstValue;
             dto.ThisUnitDTOs = entity.EntityFirstUnit;
+
             dto.ResultValueDTOs = entity.EntityResultValue;
+            
+            dto.ResultUnitDTOs = entity.EntityFirstUnit;
+            dto.ResultStringDTOs = entity.EntityResultValue + " " + dto.ResultUnitDTOs;
+
             dto.ErrorMessageDTOs = entity.EntityErrorMessage;
             dto.IsThereErrorDTOs = entity.IsEntityError;
+
             dto.ThisMeasurementTypeDTOs = entity.EntityMeasurementType;
+
             dto.ThereValueDTOs = entity.EntitySecondValue;
             dto.ThereUnitDTOs = entity.EntitySecondUnit;
+
             dto.ThereMeasurementTypeDTOs = entity.EntityMeasurementType;
             dto.OperationDTOs = entity.EntityOperation;
 
@@ -60,7 +68,7 @@ namespace QuantityMeasurementAppModels.DTOs
         {
             if (IsThereErrorDTOs)
             {
-                return new QuantityEntity(personId,OperationDTOs!, ErrorMessageDTOs!);
+                return new QuantityEntity(personId, OperationDTOs!, ErrorMessageDTOs!);
             }
 
             return new QuantityEntity(personId,
@@ -72,7 +80,7 @@ namespace QuantityMeasurementAppModels.DTOs
         }
 
         //Conversion of list of DTOs from Quantity Measurement App Models / DTOs to a list of entities in QuantityMeasurementAppModels/Entities
-        public static List<QuantityEntity> ToEntityList(List<QuantityMeasurementDTOResponse> dtos,long personId)
+        public static List<QuantityEntity> ToEntityList(List<QuantityMeasurementDTOResponse> dtos, long personId)
         {
             List<QuantityEntity> list = new List<QuantityEntity>();
 
