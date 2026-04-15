@@ -1,1 +1,6 @@
-UC18/QuantityMeasurementAppWebApi/appsettings*.json
+# Ignore all appsettings files anywhere inside UC18
+UC18/**/appsettings*.json
+
+# Ignore build files (.NET)
+**/bin/
+**/obj/
