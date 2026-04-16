@@ -1,8 +1,10 @@
-# Ignore all appsettings files anywhere inside UC18
-UC18/**/appsettings*.json
+# Ignore all appsettings files anywhere
+**/appsettings.json
+**/appsettings.*.json
 
-# Ignore build files (.NET)
+# Ignore console app
+UC18/QuantityMeasurementApp/
+
+# Build files
 **/bin/
 **/obj/
-
-UC18/**/QuantityMeasurementApp/
