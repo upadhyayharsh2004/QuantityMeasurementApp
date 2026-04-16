@@ -4,3 +4,5 @@ UC18/**/appsettings*.json
 # Ignore build files (.NET)
 **/bin/
 **/obj/
+
+UC18/**/QuantityMeasurementApp/

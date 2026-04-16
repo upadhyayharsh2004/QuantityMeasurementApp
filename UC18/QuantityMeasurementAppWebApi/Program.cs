@@ -154,10 +154,10 @@ builderWebApplication.Services.AddCors(options =>
                     "http://localhost:3000",
                     "http://127.0.0.1:3000",
                     "http://localhost:5500",
-                    "http://127.0.0.1:5501", 
+                    "http://127.0.0.1:5501",
                     "http://127.0.0.1:3001",
-                    "http://localhost:3001",  
-                    "http://localhost:5501"    
+                    "http://localhost:3001",
+                    "http://localhost:5501"
                 )
                 .AllowAnyHeader()
                 .AllowAnyMethod();
@@ -169,11 +169,17 @@ var appServices = builderWebApplication.Build();
 appServices.UseCors("AllowFrontend");
 
 
-using (var scope = appServices.Services.CreateScope())
+try
 {
-    var databaseMigrate = scope.ServiceProvider.GetRequiredService<DatabaseAppContext>();
-    databaseMigrate.Database.Migrate();
-
+    using (var scope = appServices.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<DatabaseAppContext>();
+        db.Database.Migrate();
+    }
+}
+catch (Exception ex)
+{
+    Console.WriteLine("Migration failed: " + ex.Message);
 }
 if (appServices.Environment.IsDevelopment())
 {
