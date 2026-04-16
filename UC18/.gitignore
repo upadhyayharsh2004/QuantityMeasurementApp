@@ -1,10 +1,10 @@
-# Ignore all appsettings files anywhere
+# Ignore console app anywhere
+**/QuantityMeasurementApp/
+
+# Ignore appsettings
 **/appsettings.json
 **/appsettings.*.json
 
-# Ignore console app
-UC18/QuantityMeasurementApp/
-
-# Build files
+# Build folders
 **/bin/
 **/obj/
